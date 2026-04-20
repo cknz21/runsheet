@@ -396,8 +396,6 @@ let prospects=JSON.parse(localStorage.getItem('nl_prospects')||'[]');
 let editId=null,curStar=0,curSt='',curSp='',curComps=[],curPhotos=[];
 let activeFilters={status:null,spend:null,star:null};
 let dragSrc=null;
-let isRecording=false;
-let pendingTranscript='';
 
 const WEEKS=['W1','W2','W3','W4'],DAYS=['Mon','Tue','Wed','Thu','Fri'];
 const SL={s1:'<$500',s2:'$500–$1k',s3:'$1k–$2k',s4:'$2k+'};
@@ -434,6 +432,7 @@ function filtered(){
 // ── VOICE TO TEXT — Web Speech API (native Safari/iPhone) ──────────────────
 let recognition=null;
 let isRecording=false;
+let pendingTranscript='';
 
 function toggleRecording(){
   if(isRecording){stopVoice();return;}
@@ -590,7 +589,7 @@ function openMod(id){
 }
 function closeMod(){
   document.getElementById('modw').classList.remove('op');
-  if(isRecording)stopRecording();
+  if(isRecording)stopVoice();
 }
 
 function setStar(v){curStar=curStar===v?0:v;updStars();}
