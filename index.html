@@ -9,733 +9,1191 @@
 <meta name="theme-color" content="#1D9E75">
 <title>Autosmart Run Sheet</title>
 <style>
-:root{
-  --green:#1D9E75;--green-lt:#E1F5EE;--green-dk:#0F6E56;
-  --blue:#185FA5;--blue-lt:#E6F1FB;
-  --amber:#BA7517;--amber-lt:#FAEEDA;
-  --red:#A32D2D;--red-lt:#FCEBEB;
-  --purple:#534AB7;--purple-lt:#EEEDFE;
-  --bg:#F5F4F0;--surface:#FFFFFF;
-  --border:rgba(0,0,0,0.1);--border-s:rgba(0,0,0,0.18);
-  --text:#1A1A18;--text2:#5A5A56;--text3:#9A9A94;
-  --r:12px;--rs:8px;
-}
+:root{--g:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--b:#185FA5;--bl:#E6F1FB;--a:#BA7517;--al:#FAEEDA;--r:#A32D2D;--rl:#FCEBEB;--p:#534AB7;--pl:#EEEDFE;--bg:#F5F4F0;--sf:#FFFFFF;--br:rgba(0,0,0,0.1);--brs:rgba(0,0,0,0.18);--t:#1A1A18;--t2:#5A5A56;--t3:#9A9A94}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;background:var(--bg)}
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
-
-/* HEADER */
-.hdr{background:var(--surface);border-bottom:.5px solid var(--border);padding:calc(.75rem + env(safe-area-inset-top)) 1rem .75rem;position:sticky;top:0;z-index:200}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;color:var(--t);background:var(--bg);min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+.hdr{background:var(--sf);border-bottom:.5px solid var(--br);padding:calc(.75rem + env(safe-area-inset-top)) 1rem .75rem;position:sticky;top:0;z-index:200}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;gap:8px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:8px}
-.lmark{width:28px;height:28px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lmark{width:28px;height:28px;background:var(--g);border-radius:7px;display:flex;align-items:center;justify-content:center}
 .lmark svg{width:14px;height:14px;fill:white}
-.ltxt{font-size:15px;font-weight:600;letter-spacing:-.3px}
-.ltxt span{color:var(--green)}
-.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.rep-sel{font-size:13px;padding:7px 10px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A94'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
-.cycle-badge{font-size:11px;font-family:ui-monospace,monospace;background:var(--bg);border:.5px solid var(--border-s);border-radius:20px;padding:4px 10px;color:var(--text2);white-space:nowrap}
-.cycle-badge strong{color:var(--green);font-weight:600}
-
-/* KPI */
-.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:.5rem}
-.kpi{background:var(--bg);border-radius:var(--rs);padding:7px 6px;text-align:center}
-.kl{font-size:9px;color:var(--text3);font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px;margin-bottom:1px}
-.kv{font-size:16px;font-weight:600;line-height:1}
-.kv.g{color:var(--green)}.kv.a{color:var(--amber)}.kv.b{color:var(--blue)}
-.prog-wrap{margin-top:.4rem;background:var(--border);border-radius:4px;height:3px;overflow:hidden}
-.prog-bar{height:100%;background:var(--green);border-radius:4px;transition:width .3s}
-.prog-lbl{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;margin-top:2px;text-align:right}
-
-/* ROUTE SECTION */
-.route-section{background:var(--surface);border-bottom:.5px solid var(--border);padding:.6rem 1rem}
-.cycle-nav{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
-.cnbtn{font-size:12px;padding:5px 12px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text2);cursor:pointer;-webkit-appearance:none}
-.cnbtn:active{transform:scale(.96);background:var(--green-lt)}
-.cnlbl{font-size:12px;font-family:ui-monospace,monospace;font-weight:600;flex:1;text-align:center;color:var(--text)}
-.route-grid{display:grid;grid-template-columns:auto repeat(5,1fr);gap:3px;align-items:center}
-.rg-corner,.rg-dh{font-size:9px;font-family:ui-monospace,monospace;color:var(--text3);text-transform:uppercase;text-align:center}
-.rg-wl{font-size:9px;font-family:ui-monospace,monospace;color:var(--text3);text-transform:uppercase;padding-right:4px;white-space:nowrap}
-.rg-btn{font-size:10px;font-weight:500;padding:5px 2px;border-radius:var(--rs);border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;text-align:center;line-height:1.25;width:100%;-webkit-appearance:none}
-.rg-btn:active{transform:scale(.95)}
-.rg-btn.active{background:var(--green);color:white;border-color:var(--green)}
-.rg-btn.today:not(.active){border-color:var(--green);color:var(--green-dk);font-weight:600}
-.rg-btn.free{border-style:dashed;color:var(--text3)}
-.rg-btn.free.active{background:#888780;border-color:#888780;color:white;border-style:solid}
-.rg-date{font-size:9px;display:block;opacity:.75;margin-top:1px;font-family:ui-monospace,monospace;font-weight:400}
-.rg-area{font-size:9px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;opacity:.85}
-
-/* VIEW TABS */
-.view-tabs{display:flex;gap:6px;padding:.5rem 1rem;background:var(--surface);border-bottom:.5px solid var(--border)}
-.vtab{font-size:13px;font-weight:500;padding:7px 16px;border-radius:var(--rs);border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;-webkit-appearance:none;flex:1}
-.vtab:active{transform:scale(.97)}
-.vtab.active{background:var(--green);color:white;border-color:var(--green)}
-
-/* MAIN */
-.main{padding:.75rem 1rem}
-.view-panel{display:none}.view-panel.active{display:block}
-
-/* LEADERBOARD */
-.lb-title{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);margin-bottom:.5rem}
-.lb-cards{display:flex;flex-direction:column;gap:10px}
-.lb-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:.9rem 1rem;position:relative;overflow:hidden}
-.lb-card.me{border-color:var(--green);border-width:1.5px}
-.lb-rank-badge{position:absolute;top:0;right:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border-radius:0 var(--r) 0 var(--r)}
-.rk1{background:var(--amber-lt);color:#854F0B}
-.rk2{background:var(--bg);color:var(--text2)}
-.rk3{background:#EAF3DE;color:#3B6D11}
-.lb-rep-name{font-size:15px;font-weight:600;margin-bottom:1px}
-.lb-rep-area{font-size:11px;color:var(--text3);font-family:ui-monospace,monospace;margin-bottom:.6rem}
-.lb-bars{display:flex;flex-direction:column;gap:5px}
-.lb-bar-row{display:flex;align-items:center;gap:8px}
-.lb-bar-lbl{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;width:38px;text-transform:uppercase}
-.lb-bar-track{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
-.lb-bar-fill{height:100%;border-radius:3px;transition:width .5s}
-.lb-bar-val{font-size:11px;font-family:ui-monospace,monospace;color:var(--text2);min-width:20px;text-align:right}
-.lb-total{font-size:12px;color:var(--text2);margin-top:.5rem;font-family:ui-monospace,monospace}
-.lb-total strong{color:var(--text);font-weight:600}
-
-/* PREP BANNER */
-.prep-banner{background:var(--amber-lt);border:.5px solid #EF9F27;border-radius:var(--rs);padding:.6rem .9rem;margin-bottom:.65rem;font-size:13px;color:#854F0B;line-height:1.5}
-.prep-title{font-weight:600;margin-bottom:3px}
-.ro-banner{background:var(--blue-lt);border:.5px solid var(--blue);border-radius:var(--rs);padding:.55rem .9rem;font-size:12px;color:var(--blue);margin-bottom:.65rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.suggest-btn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--rs);border:.5px solid var(--blue);background:white;color:var(--blue);cursor:pointer;-webkit-appearance:none;white-space:nowrap}
-.suggest-btn:active{transform:scale(.96)}
-
-/* STOPS */
-.stop-list{display:flex;flex-direction:column;gap:6px;margin-bottom:.75rem}
-.sc{background:var(--surface);border-radius:var(--r);border:.5px solid var(--border);overflow:hidden;transition:border-color .15s}
-.sc.done{border-color:var(--green)}.sc.skipped{opacity:.55}.sc.flagged{border-color:var(--red)}
+.ltxt{font-size:15px;font-weight:600;letter-spacing:-.3px}.ltxt span{color:var(--g)}
+.hr{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rsel{font-size:13px;padding:7px 10px;border-radius:8px;border:.5px solid var(--brs);background:var(--bg);color:var(--t);-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A94'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
+.cbdg{font-size:11px;font-family:ui-monospace,monospace;background:var(--bg);border:.5px solid var(--brs);border-radius:20px;padding:4px 10px;color:var(--t2);white-space:nowrap}
+.cbdg strong{color:var(--g);font-weight:600}
+.ks{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:.5rem}
+.kc{background:var(--bg);border-radius:8px;padding:7px 6px;text-align:center}
+.kl{font-size:9px;color:var(--t3);font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px;margin-bottom:1px}
+.kv{font-size:16px;font-weight:600;line-height:1}.kv.g{color:var(--g)}.kv.a{color:var(--a)}.kv.b{color:var(--b)}
+.pw{margin-top:.4rem;background:var(--br);border-radius:4px;height:3px;overflow:hidden}
+.pb{height:100%;background:var(--g);border-radius:4px;transition:width .3s}
+.pl{font-size:10px;color:var(--t3);font-family:ui-monospace,monospace;margin-top:2px;text-align:right}
+.rs{background:var(--sf);border-bottom:.5px solid var(--br);padding:.6rem 1rem}
+.cn{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.cnb{font-size:12px;padding:5px 12px;border-radius:8px;border:.5px solid var(--brs);background:var(--bg);color:var(--t2);cursor:pointer;-webkit-appearance:none}
+.cnb:active{transform:scale(.96)}
+.cnl{font-size:12px;font-family:ui-monospace,monospace;font-weight:600;flex:1;text-align:center}
+.rg{display:grid;grid-template-columns:auto repeat(5,1fr);gap:3px;align-items:center}
+.rgh{font-size:9px;font-family:ui-monospace,monospace;color:var(--t3);text-transform:uppercase;text-align:center}
+.rgw{font-size:9px;font-family:ui-monospace,monospace;color:var(--t3);text-transform:uppercase;padding-right:4px;white-space:nowrap}
+.rgb{font-size:10px;font-weight:500;padding:5px 2px;border-radius:8px;border:.5px solid var(--brs);background:transparent;color:var(--t2);cursor:pointer;text-align:center;line-height:1.25;width:100%;-webkit-appearance:none}
+.rgb:active{transform:scale(.95)}
+.rgb.act{background:var(--g);color:white;border-color:var(--g)}
+.rgb.tod:not(.act){border-color:var(--g);color:var(--gd);font-weight:600}
+.rgb.fr{border-style:dashed;color:var(--t3)}
+.rgb.fr.act{background:#888780;border-color:#888780;color:white;border-style:solid}
+.rgd{font-size:9px;display:block;opacity:.75;margin-top:1px;font-family:ui-monospace,monospace;font-weight:400}
+.rga{font-size:9px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;opacity:.85}
+.vt{display:flex;gap:6px;padding:.5rem 1rem;background:var(--sf);border-bottom:.5px solid var(--br)}
+.vtb{font-size:13px;font-weight:500;padding:7px 0;border-radius:8px;border:.5px solid var(--brs);background:transparent;color:var(--t2);cursor:pointer;-webkit-appearance:none;flex:1;text-align:center}
+.vtb:active{transform:scale(.97)}
+.vtb.act{background:var(--g);color:white;border-color:var(--g)}
+.mn{padding:.75rem 1rem}
+.vp{display:none}.vp.act{display:block}
+.lbt{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:.5rem}
+.lbc{display:flex;flex-direction:column;gap:10px}
+.lbcard{background:var(--sf);border:.5px solid var(--br);border-radius:12px;padding:.9rem 1rem;position:relative;overflow:hidden}
+.lbcard.me{border-color:var(--g);border-width:1.5px}
+.lbrk{position:absolute;top:0;right:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border-radius:0 12px 0 12px}
+.rk1{background:var(--al);color:#854F0B}.rk2{background:var(--bg);color:var(--t2)}.rk3{background:#EAF3DE;color:#3B6D11}
+.lbn{font-size:15px;font-weight:600;margin-bottom:1px}
+.lba{font-size:11px;color:var(--t3);font-family:ui-monospace,monospace;margin-bottom:.6rem}
+.lbb{display:flex;flex-direction:column;gap:5px}
+.lbbr{display:flex;align-items:center;gap:8px}
+.lbbl{font-size:10px;color:var(--t3);font-family:ui-monospace,monospace;width:38px;text-transform:uppercase}
+.lbbt{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.lbbf{height:100%;border-radius:3px;transition:width .5s}
+.lbbv{font-size:11px;font-family:ui-monospace,monospace;color:var(--t2);min-width:20px;text-align:right}
+.lbto{font-size:12px;color:var(--t2);margin-top:.5rem;font-family:ui-monospace,monospace}
+.lbto strong{color:var(--t);font-weight:600}
+.prepb{background:var(--al);border:.5px solid #EF9F27;border-radius:8px;padding:.6rem .9rem;margin-bottom:.65rem;font-size:13px;color:#854F0B;line-height:1.5}
+.prept{font-weight:600;margin-bottom:3px}
+.rob{background:var(--bl);border:.5px solid var(--b);border-radius:8px;padding:.55rem .9rem;font-size:12px;color:var(--b);margin-bottom:.65rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.slb{font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;border:.5px solid var(--b);background:white;color:var(--b);cursor:pointer;-webkit-appearance:none;white-space:nowrap}
+.slb:active{transform:scale(.96)}
+.sl{display:flex;flex-direction:column;gap:6px;margin-bottom:.75rem}
+.sc{background:var(--sf);border-radius:12px;border:.5px solid var(--br);overflow:hidden;transition:border-color .15s}
+.sc.dn{border-color:var(--g)}.sc.sk{opacity:.55}.sc.fl{border-color:var(--r)}
 .sh{display:flex;align-items:center;gap:8px;padding:.7rem .9rem;cursor:pointer;user-select:none;-webkit-user-select:none;min-height:54px}
 .sh:active{background:var(--bg)}
-.dh{color:var(--text3);font-size:14px;cursor:grab;flex-shrink:0;padding:0 2px}
-.snum{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text3);font-family:ui-monospace,monospace}
-.snum.done{background:var(--green);color:white}.snum.fl{background:var(--red);color:white}
+.dh{color:var(--t3);font-size:14px;cursor:grab;flex-shrink:0;padding:0 2px}
+.sn{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--t3);font-family:ui-monospace,monospace}
+.sn.dn{background:var(--g);color:white}.sn.fl{background:var(--r);color:white}
 .si{flex:1;min-width:0}
-.sname{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.1px}
-.saddr{font-size:12px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stime{font-size:10px;color:var(--green);font-family:ui-monospace,monospace;margin-top:2px}
-.sbdg{display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0}
-.badge{font-size:10px;font-weight:600;padding:3px 7px;border-radius:10px;white-space:nowrap}
-.bc{background:var(--green-lt);color:var(--green-dk)}.bq{background:var(--blue-lt);color:var(--blue)}
-.bsold{background:var(--green);color:white}.bna{background:var(--red-lt);color:var(--red)}
-.bskip{background:var(--bg);color:var(--text3)}.bcyc{background:var(--purple-lt);color:var(--purple)}
-.bfl{background:var(--red-lt);color:var(--red)}
-.chev{font-size:11px;color:var(--text3);transition:transform .15s;flex-shrink:0}
-.chev.open{transform:rotate(90deg)}
-
-/* DETAIL */
-.sdet{display:none;border-top:.5px solid var(--border);padding:.85rem .9rem}
-.sdet.open{display:block}
+.snm{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.1px}
+.sad{font-size:12px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stm{font-size:10px;color:var(--g);font-family:ui-monospace,monospace;margin-top:2px}
+.sbg{display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0}
+.bg{font-size:10px;font-weight:600;padding:3px 7px;border-radius:10px;white-space:nowrap}
+.bgc{background:var(--gl);color:var(--gd)}.bgq{background:var(--bl);color:var(--b)}
+.bgs{background:var(--g);color:white}.bgn{background:var(--rl);color:var(--r)}
+.bgsk{background:var(--bg);color:var(--t3)}.bgcy{background:var(--pl);color:var(--p)}
+.bgfl{background:var(--rl);color:var(--r)}
+.chv{font-size:11px;color:var(--t3);transition:transform .15s;flex-shrink:0}
+.chv.op{transform:rotate(90deg)}
+.sdt{display:none;border-top:.5px solid var(--br);padding:.85rem .9rem}
+.sdt.op{display:block}
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.7rem}
 .cf{display:flex;flex-direction:column;gap:3px}
-.flbl{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px}
-.cf input,.mf input,.mf select{font-size:14px;padding:9px 11px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);width:100%;-webkit-appearance:none;-webkit-text-size-adjust:100%}
-.cf input:focus,.mf input:focus,.mf select:focus{outline:none;border-color:var(--green)}
+.flb{font-size:10px;color:var(--t3);font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px}
+.cf input,.mf input,.mf select{font-size:14px;padding:9px 11px;border-radius:8px;border:.5px solid var(--brs);background:var(--bg);color:var(--t);width:100%;-webkit-appearance:none}
+.cf input:focus,.mf input:focus,.mf select:focus{outline:none;border-color:var(--g)}
 .cl{display:flex;gap:6px;margin-bottom:.7rem;flex-wrap:wrap}
-.clink{font-size:13px;font-weight:600;padding:9px 15px;border-radius:var(--rs);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
-.clink.ph{background:var(--green-lt);color:var(--green-dk);border:.5px solid var(--green)}
-.clink.em{background:var(--blue-lt);color:var(--blue);border:.5px solid var(--blue)}
-.clink:active{transform:scale(.96)}
-.cy-row{display:flex;align-items:center;gap:8px;margin-bottom:.7rem}
-.cy-row span{font-size:13px;color:var(--text2)}
-.cy-sel{font-size:13px;padding:7px 10px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);-webkit-appearance:none}
-.bg-note{font-size:13px;color:var(--text2);background:var(--bg);border-radius:var(--rs);padding:9px 11px;margin-bottom:.7rem;line-height:1.55}
-.orow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.7rem}
-.ob{font-size:13px;font-weight:600;padding:8px 14px;border-radius:20px;border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;-webkit-appearance:none;transition:all .1s}
+.clk{font-size:13px;font-weight:600;padding:9px 15px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.clk.ph{background:var(--gl);color:var(--gd);border:.5px solid var(--g)}
+.clk.em{background:var(--bl);color:var(--b);border:.5px solid var(--b)}
+.clk:active{transform:scale(.96)}
+.cyr{display:flex;align-items:center;gap:8px;margin-bottom:.7rem}
+.cyr span{font-size:13px;color:var(--t2)}
+.cys{font-size:13px;padding:7px 10px;border-radius:8px;border:.5px solid var(--brs);background:var(--bg);color:var(--t);-webkit-appearance:none}
+.bgnote{font-size:13px;color:var(--t2);background:var(--bg);border-radius:8px;padding:9px 11px;margin-bottom:.7rem;line-height:1.55}
+.or{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.7rem}
+.ob{font-size:13px;font-weight:600;padding:8px 14px;border-radius:20px;border:.5px solid var(--brs);background:transparent;color:var(--t2);cursor:pointer;-webkit-appearance:none}
 .ob:active{transform:scale(.94)}
-.ob.as{background:var(--green);color:white;border-color:var(--green)}
-.ob.aq{background:var(--blue);color:white;border-color:var(--blue)}
-.ob.ad{background:var(--amber);color:white;border-color:var(--amber)}
-.ob.at{background:var(--purple);color:white;border-color:var(--purple)}
-.ob.an{background:var(--red-lt);color:var(--red);border-color:var(--red)}
-.ob.aski{background:var(--bg);color:var(--text3)}
+.ob.as{background:var(--g);color:white;border-color:var(--g)}
+.ob.aq{background:var(--b);color:white;border-color:var(--b)}
+.ob.ad{background:var(--a);color:white;border-color:var(--a)}
+.ob.at{background:var(--p);color:white;border-color:var(--p)}
+.ob.an{background:var(--rl);color:var(--r);border-color:var(--r)}
+.ob.ask{background:var(--bg);color:var(--t3)}
 .ng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.7rem}
-.ng textarea,.fn textarea,.eod-grid textarea,.ref-box textarea,.msg-compose textarea{font-size:14px;padding:9px 11px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);resize:vertical;min-height:56px;line-height:1.5;width:100%;-webkit-appearance:none;-webkit-text-size-adjust:100%}
-.ng textarea:focus,.fn textarea:focus,.eod-grid textarea:focus,.ref-box textarea:focus,.msg-compose textarea:focus{outline:none;border-color:var(--green)}
+.ng textarea,.fn textarea,.eg textarea,.refb textarea,.mc textarea{font-size:14px;padding:9px 11px;border-radius:8px;border:.5px solid var(--brs);background:var(--bg);color:var(--t);resize:vertical;min-height:56px;line-height:1.5;width:100%;-webkit-appearance:none}
+.ng textarea:focus,.fn textarea:focus,.eg textarea:focus,.refb textarea:focus,.mc textarea:focus{outline:none;border-color:var(--g)}
 .fn{margin-bottom:.7rem}
-.ref-box{background:var(--bg);border-radius:var(--rs);padding:.6rem .8rem;margin-bottom:.7rem}
-.ref-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.4rem;display:flex;align-items:center;gap:5px}
-.ref-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0}
-.ref-box textarea{background:var(--surface)}
+.refb{background:var(--bg);border-radius:8px;padding:.6rem .8rem;margin-bottom:.7rem}
+.reft{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:.4rem;display:flex;align-items:center;gap:5px}
+.refd{width:6px;height:6px;border-radius:50%;background:var(--a);flex-shrink:0}
+.refb textarea{background:var(--sf)}
 .ar{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
-.oi{width:90px;font-size:14px;font-family:ui-monospace,monospace;padding:9px 10px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);-webkit-appearance:none}
-.oi:focus{outline:none;border-color:var(--green)}
-.abtn{font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--rs);border:.5px solid var(--green);background:var(--green-lt);color:var(--green-dk);cursor:pointer;-webkit-appearance:none;white-space:nowrap}
-.abtn.done{background:var(--green);color:white}
-.abtn:active{transform:scale(.96)}
-.fbtn{font-size:13px;font-weight:600;padding:9px 13px;border-radius:var(--rs);border:.5px solid var(--red);background:var(--red-lt);color:var(--red);cursor:pointer;-webkit-appearance:none;margin-left:auto}
-.fbtn.active{background:var(--red);color:white}
-.fbtn:active{transform:scale(.96)}
-
-/* MESSAGES */
-.msg-title{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);margin-bottom:.5rem}
-.msg-list{display:flex;flex-direction:column;gap:8px;margin-bottom:.65rem}
-.msg-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);padding:.7rem .9rem}
-.msg-card.lead{border-color:var(--amber)}
-.msg-hdr{display:flex;align-items:center;gap:7px;margin-bottom:.3rem}
-.msg-from{font-size:13px;font-weight:600}
-.msg-time{font-size:11px;color:var(--text3);font-family:ui-monospace,monospace}
-.msg-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;background:var(--amber-lt);color:#854F0B}
-.msg-body{font-size:13px;color:var(--text2);line-height:1.5}
-.msg-compose{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
-.msg-compose textarea{min-height:60px}
-.msg-actions{display:flex;flex-direction:column;gap:6px}
-.msg-send{font-size:12px;font-weight:600;padding:9px 12px;border-radius:var(--rs);border:none;background:var(--green);color:white;cursor:pointer;-webkit-appearance:none}
-.msg-send:active{transform:scale(.96)}
-.msg-lead-btn{font-size:12px;font-weight:600;padding:9px 12px;border-radius:var(--rs);border:.5px solid var(--amber);background:var(--amber-lt);color:#854F0B;cursor:pointer;-webkit-appearance:none}
-.msg-lead-btn:active{transform:scale(.96)}
-
-/* MODAL */
-.modal-wrap{display:none;padding:0 0 .75rem}
-.modal-bg{background:rgba(0,0,0,0.4);border-radius:var(--r);padding:1.5rem 1rem;display:flex;align-items:flex-start;justify-content:center;min-height:300px}
-.modal{background:var(--surface);border-radius:var(--r);padding:1.2rem;width:100%;max-width:480px}
-.modal-title{font-size:16px;font-weight:700;margin-bottom:.9rem}
+.oi{width:90px;font-size:14px;font-family:ui-monospace,monospace;padding:9px 10px;border-radius:8px;border:.5px solid var(--brs);background:var(--bg);color:var(--t);-webkit-appearance:none}
+.oi:focus{outline:none;border-color:var(--g)}
+.ab{font-size:13px;font-weight:600;padding:9px 16px;border-radius:8px;border:.5px solid var(--g);background:var(--gl);color:var(--gd);cursor:pointer;-webkit-appearance:none;white-space:nowrap}
+.ab.dn{background:var(--g);color:white}
+.ab:active{transform:scale(.96)}
+.fb{font-size:13px;font-weight:600;padding:9px 13px;border-radius:8px;border:.5px solid var(--r);background:var(--rl);color:var(--r);cursor:pointer;-webkit-appearance:none;margin-left:auto}
+.fb.act{background:var(--r);color:white}
+.fb:active{transform:scale(.96)}
+.mt{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:.5rem}
+.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:.65rem}
+.mcard{background:var(--sf);border:.5px solid var(--br);border-radius:8px;padding:.7rem .9rem}
+.mcard.ld{border-color:var(--a)}
+.mhdr{display:flex;align-items:center;gap:7px;margin-bottom:.3rem}
+.mfr{font-size:13px;font-weight:600}
+.mti{font-size:11px;color:var(--t3);font-family:ui-monospace,monospace}
+.mtag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;background:var(--al);color:#854F0B}
+.mbdy{font-size:13px;color:var(--t2);line-height:1.5}
+.mc{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.mc textarea{min-height:60px}
+.ma{display:flex;flex-direction:column;gap:6px}
+.msb{font-size:12px;font-weight:600;padding:9px 12px;border-radius:8px;border:none;background:var(--g);color:white;cursor:pointer;-webkit-appearance:none}
+.msb:active{transform:scale(.96)}
+.mlb{font-size:12px;font-weight:600;padding:9px 12px;border-radius:8px;border:.5px solid var(--a);background:var(--al);color:#854F0B;cursor:pointer;-webkit-appearance:none}
+.mlb:active{transform:scale(.96)}
+.modw{display:none;padding:0 0 .75rem}
+.modbg{background:rgba(0,0,0,0.4);border-radius:12px;padding:1.5rem 1rem;display:flex;align-items:flex-start;justify-content:center;min-height:300px}
+.mod{background:var(--sf);border-radius:12px;padding:1.2rem;width:100%;max-width:480px}
+.modt{font-size:16px;font-weight:700;margin-bottom:.9rem}
 .mf{margin-bottom:.7rem}
-.mf label{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px;color:var(--text3);display:block;margin-bottom:4px}
+.mf label{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px;color:var(--t3);display:block;margin-bottom:4px}
 .mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:.9rem}
-.btn-cancel{font-size:14px;padding:9px 16px;border-radius:var(--rs);border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;-webkit-appearance:none}
-.btn-cancel:active{transform:scale(.96)}
-.btn-add{font-size:14px;font-weight:600;padding:9px 16px;border-radius:var(--rs);border:none;background:var(--green);color:white;cursor:pointer;-webkit-appearance:none}
-.btn-add:active{transform:scale(.96)}
-
-/* EOD */
-.eod{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.75rem}
-.eod-title{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);margin-bottom:.65rem}
-.eod-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.65rem}
-.sbtn{width:100%;padding:13px;border-radius:var(--rs);border:none;background:var(--green);color:white;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
-.sbtn:active{transform:scale(.99);background:var(--green-dk)}
-.add-stop-btn{width:100%;padding:11px;border-radius:var(--rs);border:.5px dashed var(--border-s);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;-webkit-appearance:none;margin-bottom:.75rem}
-.add-stop-btn:active{background:var(--green-lt);border-color:var(--green);color:var(--green-dk)}
-.empty-day{text-align:center;padding:2.5rem 1rem;color:var(--text3);font-size:14px}
-
-/* TOAST */
-.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:var(--surface);font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;z-index:999;transition:transform .25s ease;white-space:nowrap}
+.bcan{font-size:14px;padding:9px 16px;border-radius:8px;border:.5px solid var(--brs);background:transparent;color:var(--t2);cursor:pointer;-webkit-appearance:none}
+.bcan:active{transform:scale(.96)}
+.badd{font-size:14px;font-weight:600;padding:9px 16px;border-radius:8px;border:none;background:var(--g);color:white;cursor:pointer;-webkit-appearance:none}
+.badd:active{transform:scale(.96)}
+.eod{background:var(--sf);border:.5px solid var(--br);border-radius:12px;padding:1rem;margin-bottom:.75rem}
+.eodt{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:.65rem}
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.65rem}
+.sbtn{width:100%;padding:13px;border-radius:8px;border:none;background:var(--g);color:white;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+.sbtn:active{transform:scale(.99);background:var(--gd)}
+.asb{width:100%;padding:11px;border-radius:8px;border:.5px dashed var(--brs);background:transparent;color:var(--t2);font-size:13px;cursor:pointer;-webkit-appearance:none;margin-bottom:.75rem}
+.asb:active{background:var(--gl);border-color:var(--g);color:var(--gd)}
+.emp{text-align:center;padding:2.5rem 1rem;color:var(--t3);font-size:14px}
+.inst{background:var(--g);color:white;padding:.65rem 1rem;font-size:12px;text-align:center;line-height:1.5;display:none}
+.inst.vis{display:block}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(80px);background:var(--t);color:var(--sf);font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;z-index:999;transition:transform .25s ease;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
-
-/* INSTALL BANNER */
-.install-banner{background:var(--green);color:white;padding:.65rem 1rem;font-size:12px;text-align:center;line-height:1.5;display:none}
-.install-banner.visible{display:block}
-
-@media(max-width:480px){
-  .kpi-strip{grid-template-columns:repeat(3,1fr)}
-  .kpi-strip .kpi:nth-child(n+4){display:none}
-  .cg,.ng,.eod-grid{grid-template-columns:1fr}
-  .route-grid{font-size:8px}
-}
+@media(max-width:480px){.ks{grid-template-columns:repeat(3,1fr)}.ks .kc:nth-child(n+4){display:none}.cg,.ng,.eg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<div class="install-banner" id="installBanner">
-  To install: tap the Share button, then "Add to Home Screen"
-</div>
-
+<div class="inst" id="inst">To install: tap Share then "Add to Home Screen"</div>
 <div class="hdr">
   <div class="hdr-top">
-    <div class="logo">
-      <div class="lmark"><svg viewBox="0 0 16 16"><path d="M8 1L1 5v6l7 4 7-4V5L8 1zm0 2l5 2.9v5.2L8 14l-5-2.9V5.9L8 3z"/></svg></div>
-      <div class="ltxt"><span>Auto</span>smart</div>
-    </div>
-    <div class="hdr-right">
-      <select class="rep-sel" id="repSel" onchange="repChanged()">
+    <div class="logo"><div class="lmark"><svg viewBox="0 0 16 16"><path d="M8 1L1 5v6l7 4 7-4V5L8 1zm0 2l5 2.9v5.2L8 14l-5-2.9V5.9L8 3z"/></svg></div><div class="ltxt"><span>Auto</span>smart</div></div>
+    <div class="hr">
+      <select class="rsel" id="rsel" onchange="repCh()">
         <option value="">— Select rep —</option>
         <option value="Ron">Ron</option>
         <option value="Rep2">Rep 2</option>
-        <option value="Hamilton">Hamilton</option>
+        <option value="Ham">Hamilton</option>
       </select>
-      <span class="cycle-badge" id="cycleBadge">Cycle <strong>—</strong></span>
+      <span class="cbdg" id="cbdg">Cycle <strong>—</strong></span>
     </div>
   </div>
-  <div class="kpi-strip">
-    <div class="kpi"><div class="kl">Stops</div><div class="kv" id="kS">0/0</div></div>
-    <div class="kpi"><div class="kl">Invoices</div><div class="kv g" id="kI">0</div></div>
-    <div class="kpi"><div class="kl">Demos</div><div class="kv a" id="kD">0</div></div>
-    <div class="kpi"><div class="kl">Quotes</div><div class="kv b" id="kQ">0</div></div>
-    <div class="kpi"><div class="kl">AOV</div><div class="kv g" id="kA">—</div></div>
-    <div class="kpi"><div class="kl">Target</div><div class="kv" id="kT">20</div></div>
+  <div class="ks">
+    <div class="kc"><div class="kl">Stops</div><div class="kv" id="kS">0/0</div></div>
+    <div class="kc"><div class="kl">Invoices</div><div class="kv g" id="kI">0</div></div>
+    <div class="kc"><div class="kl">Demos</div><div class="kv a" id="kD">0</div></div>
+    <div class="kc"><div class="kl">Quotes</div><div class="kv b" id="kQ">0</div></div>
+    <div class="kc"><div class="kl">AOV</div><div class="kv g" id="kA">—</div></div>
+    <div class="kc"><div class="kl">Target</div><div class="kv" id="kT">20</div></div>
   </div>
-  <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
-  <div class="prog-lbl" id="progLbl">0 of 20 stops</div>
+  <div class="pw"><div class="pb" id="pb" style="width:0%"></div></div>
+  <div class="pl" id="pltxt">0 of 20 stops</div>
 </div>
-
-<div class="route-section">
-  <div class="cycle-nav">
-    <button class="cnbtn" onclick="shiftCycle(-1)">← Prev</button>
-    <div class="cnlbl" id="cycleNavLabel"></div>
-    <button class="cnbtn" onclick="shiftCycle(1)">Next →</button>
+<div class="rs">
+  <div class="cn">
+    <button class="cnb" onclick="shiftC(-1)">← Prev</button>
+    <div class="cnl" id="cnl"></div>
+    <button class="cnb" onclick="shiftC(1)">Next →</button>
   </div>
-  <div class="route-grid" id="routeGrid"></div>
+  <div class="rg" id="rg"></div>
 </div>
-
-<div class="view-tabs">
-  <button class="vtab active" id="vtab-run" onclick="switchView('run')">Run sheet</button>
-  <button class="vtab" id="vtab-lb" onclick="switchView('lb')">Leaderboard</button>
-  <button class="vtab" id="vtab-msg" onclick="switchView('msg')">Messages</button>
+<div class="vt">
+  <button class="vtb act" id="vt-run" onclick="sv('run')">Run sheet</button>
+  <button class="vtb" id="vt-lb" onclick="sv('lb')">Leaderboard</button>
+  <button class="vtb" id="vt-msg" onclick="sv('msg')">Messages</button>
 </div>
-
-<div class="main">
-
-  <div class="view-panel active" id="panel-run">
-    <div id="prepBanner"></div>
-    <div id="roBanner"></div>
-    <div class="stop-list" id="stopList"></div>
-    <button class="add-stop-btn" id="addStopBtn" onclick="showModal()">+ Add stop</button>
-    <div class="eod" id="eodSection">
-      <div class="eod-title">End of day</div>
-      <div class="eod-grid">
-        <div><div class="flbl" style="margin-bottom:4px">Notes</div><textarea id="eodN" placeholder="Key observations..."></textarea></div>
-        <div><div class="flbl" style="margin-bottom:4px">Call backs</div><textarea id="eodC" placeholder="Who to follow up..."></textarea></div>
+<div class="mn">
+  <div class="vp act" id="pn-run">
+    <div id="prepb"></div><div id="rob"></div>
+    <div class="sl" id="sl"></div>
+    <button class="asb" id="asb" onclick="showMod()">+ Add stop</button>
+    <div class="eod" id="eods">
+      <div class="eodt">End of day</div>
+      <div class="eg">
+        <div><div class="flb" style="margin-bottom:4px">Notes</div><textarea id="eN" placeholder="Key observations..."></textarea></div>
+        <div><div class="flb" style="margin-bottom:4px">Call backs</div><textarea id="eC" placeholder="Who to follow up..."></textarea></div>
       </div>
-      <button class="sbtn" onclick="submitDay()">Submit day</button>
+      <button class="sbtn" onclick="subDay()">Submit day</button>
     </div>
   </div>
-
-  <div class="view-panel" id="panel-lb">
-    <div class="lb-title">This cycle — standings</div>
-    <div class="lb-cards" id="lbCards"></div>
-  </div>
-
-  <div class="view-panel" id="panel-msg">
-    <div class="msg-title">Team messages &amp; leads</div>
-    <div class="msg-list" id="msgList"></div>
-    <div class="msg-compose">
-      <textarea id="msgInput" placeholder="Message team or suggest a lead..."></textarea>
-      <div class="msg-actions">
-        <button class="msg-send" onclick="sendMsg(false)">Send</button>
-        <button class="msg-lead-btn" onclick="sendMsg(true)">Lead</button>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<div class="modal-wrap" id="modalWrap">
-  <div class="modal-bg">
-    <div class="modal">
-      <div class="modal-title">Add new stop</div>
-      <div class="mf"><label>Business name</label><input id="mName" type="text" placeholder="e.g. Auckland Detailing Co"></div>
-      <div class="mf"><label>Address</label><input id="mAddr" type="text" placeholder="Street address"></div>
-      <div class="mf"><label>Contact name</label><input id="mContact" type="text" placeholder="Decision maker"></div>
-      <div class="mf"><label>Phone</label><input id="mPhone" type="tel" placeholder="+64 21 000 000"></div>
-      <div class="mf"><label>Email</label><input id="mEmail" type="email" placeholder="contact@business.co.nz"></div>
-      <div class="mf"><label>Visit cycle</label>
-        <select id="mCycle" style="font-size:14px;padding:9px 11px;border-radius:8px;border:.5px solid rgba(0,0,0,0.18);background:#F5F4F0;color:#1A1A18;width:100%">
-          <option value="1">Weekly</option>
-          <option value="2">Fortnightly</option>
-          <option value="4" selected>4 weekly</option>
-          <option value="6">6 weekly</option>
-          <option value="8">8 weekly</option>
-          <option value="12">12 weekly</option>
-        </select>
-      </div>
-      <div class="mf"><label>Notes</label><input id="mNote" type="text" placeholder="What to bring, who to ask for..."></div>
-      <div class="mbtns">
-        <button class="btn-cancel" onclick="hideModal()">Cancel</button>
-        <button class="btn-add" onclick="addStop()">Add to route</button>
-      </div>
+  <div class="vp" id="pn-lb"><div class="lbt">This cycle — standings</div><div class="lbc" id="lbc"></div></div>
+  <div class="vp" id="pn-msg">
+    <div class="mt">Team messages &amp; leads</div>
+    <div class="ml" id="mlist"></div>
+    <div class="mc">
+      <textarea id="mi" placeholder="Message team or suggest a lead..."></textarea>
+      <div class="ma"><button class="msb" onclick="sendM(false)">Send</button><button class="mlb" onclick="sendM(true)">Lead</button></div>
     </div>
   </div>
 </div>
-
+<div class="modw" id="modw">
+  <div class="modbg"><div class="mod">
+    <div class="modt">Add new stop</div>
+    <div class="mf"><label>Business name</label><input id="mNm" type="text" placeholder="e.g. Auckland Detailing Co"></div>
+    <div class="mf"><label>Address</label><input id="mAd" type="text" placeholder="Street address"></div>
+    <div class="mf"><label>Contact name</label><input id="mCo" type="text" placeholder="Decision maker"></div>
+    <div class="mf"><label>Phone</label><input id="mPh" type="tel" placeholder="+64 21 000 000"></div>
+    <div class="mf"><label>Email</label><input id="mEm" type="email" placeholder="contact@business.co.nz"></div>
+    <div class="mf"><label>Visit cycle</label><select id="mCy" style="font-size:14px;padding:9px 11px;border-radius:8px;border:.5px solid rgba(0,0,0,0.18);background:#F5F4F0;color:#1A1A18;width:100%"><option value="1">Weekly</option><option value="2">Fortnightly</option><option value="4" selected>4 weekly</option><option value="6">6 weekly</option><option value="8">8 weekly</option><option value="12">12 weekly</option></select></div>
+    <div class="mf"><label>Notes</label><input id="mNo" type="text" placeholder="What to bring, who to ask for..."></div>
+    <div class="mbtns"><button class="bcan" onclick="hideMod()">Cancel</button><button class="badd" onclick="addSt()">Add to route</button></div>
+  </div></div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-const CYCLE_START=new Date('2025-01-05');
-const MS_DAY=86400000;
-function getCycleInfo(d){const days=Math.floor((d-CYCLE_START)/MS_DAY);if(days<0)return{cycle:1,week:1};const c=Math.floor(days/28)+1;const w=Math.floor((days%28)/7)+1;return{cycle:c,week:w};}
-function getDateForCell(cycle,weekIdx,dayIdx){return new Date(CYCLE_START.getTime()+((cycle-1)*28+weekIdx*7+dayIdx)*MS_DAY);}
-function fmtShort(d){return d.toLocaleDateString('en-NZ',{day:'numeric',month:'short'});}
-function fmtFull(d){return d.toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
-
+const CS=new Date('2025-01-05');
+function gci(d){const days=Math.floor((d-CS)/86400000);if(days<0)return{cycle:1,week:1};return{cycle:Math.floor(days/28)+1,week:Math.floor((days%28)/7)+1};}
+function gdc(c,wi,di){return new Date(CS.getTime()+((c-1)*28+wi*7+di)*86400000);}
+function fs(d){return d.toLocaleDateString('en-NZ',{day:'numeric',month:'short'});}
+function ff(d){return d.toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 const TODAY=new Date();TODAY.setHours(0,0,0,0);
-const todayInfo=getCycleInfo(TODAY);
-let viewCycle=todayInfo.cycle;
-let curRep='Ron';
-let curRouteKey='W1-Mon';
-let expandId=null;
-let dragSrc=null;
+const TI=gci(TODAY);
+let VC=TI.cycle,CR='Ron',CRK='W1-Mon',EX=null,DS=null;
+const FREE=['Free','Cold Call','Tauranga','Tauriko','Rotorua','Morrinsville'];
+const WKS=['W1','W2','W3','W4'],DYS=['Mon','Tue','Wed','Thu','Fri'];
 
-const FREE_PATTERNS=['Free day','Cold Call','Tauranga'];
-const WEEKS=['W1','W2','W3','W4'];
-const DAYS=['Mon','Tue','Wed','Thu','Fri'];
+// ── ROUTE DATA ──────────────────────────────────────────────────────────────
+function s(id,a,addr,contact,phone,n,pre,cycle){return{id,a,addr:addr||'',contact:contact||'',phone:phone||'',email:'',n:n||'',pre:pre||'',cycle:cycle||4};}
 
 const ROUTES={
-  Ron:{
-    'W1-Mon':{area:'Mangere',stops:[
-      {id:'r-m1-1',a:'Carpoint',addr:'104 Montgomerie Rd',contact:'Khurram',phone:'',email:'',n:'Wants to buy next month',pre:'',cycle:4},
-      {id:'r-m1-2',a:'ED Pacific Horizon',addr:'164 Montgomerie Rd',contact:'',phone:'',email:'',n:'Quoted — follow up',pre:'Q',cycle:4},
-      {id:'r-m1-3',a:'Aero Automotive',addr:'9 Brigade Rd',contact:'Stu',phone:'',email:'',n:'Customer',pre:'S',cycle:4},
-      {id:'r-m1-4',a:'Trans Mech',addr:'15 Andrew Baxter Dr',contact:'Keith',phone:'',email:'',n:'Willing to trial — call back',pre:'',cycle:4},
-      {id:'r-m1-5',a:'Asplundh',addr:'50 Andrew Baxter Dr',contact:'',phone:'',email:'',n:'Quoted — call in',pre:'Q',cycle:4},
-      {id:'r-m1-6',a:'Interstate Trucking',addr:'32 Pavilion Drive',contact:'Vejay',phone:'',email:'',n:'Gave quote',pre:'Q',cycle:4},
-      {id:'r-m1-7',a:'Hire Ace',addr:'12 Pavilion Drive',contact:'Karan',phone:'',email:'',n:'Decision maker Pacer — do quote',pre:'',cycle:4},
-      {id:'r-m1-8',a:'Endraulic',addr:'3 Rennie Drive',contact:'Brett',phone:'',email:'',n:'Quoted — see early December',pre:'Q',cycle:4},
-      {id:'r-m1-9',a:'Bus Travel NZ',addr:'2 Rennie Drive',contact:'John',phone:'',email:'',n:'Quoted, wants to try HSNS',pre:'Q',cycle:4},
-      {id:'r-m1-10',a:'ACM Motorhomes',addr:'21 Rennie Drive',contact:'Loretta',phone:'',email:'',n:'Paint protection quoted',pre:'Q',cycle:4},
-      {id:'r-m1-11',a:'Auto Supershoppe',addr:'42 Rennie Drive',contact:'',phone:'',email:'',n:'Uses Wurth — call in again',pre:'',cycle:4},
-      {id:'r-m1-12',a:'Lucky Campers',addr:'5 Aintree Ave',contact:'Nathan',phone:'',email:'',n:'Quote sent — needs follow up',pre:'Q',cycle:4},
-      {id:'r-m1-13',a:'CTG Earthmoving',addr:'31 Aintree',contact:'',phone:'',email:'',n:'Call in',pre:'',cycle:4},
-      {id:'r-m1-14',a:'24/7 Mechanical',addr:'21 Brigade Rd',contact:'Navi',phone:'021992929',email:'',n:'Discuss haulage and Detailer',pre:'',cycle:4},
-      {id:'r-m1-15',a:'TUI Campers',addr:'142 Robertson Rd',contact:'Paul',phone:'',email:'',n:'Needs quote — H/O Christchurch',pre:'',cycle:4},
-      {id:'r-m1-16',a:'Kiwi Campers',addr:'8/197 Montgomerie Rd',contact:'Brema',phone:'',email:'',n:'Sort gloves issue',pre:'S',cycle:4},
-    ]},
-    'W1-Tue':{area:'Mangere Prime',stops:[
-      {id:'r-t1-1',a:'Ezu Car Rental',addr:'67 Montgomerie Rd',contact:'Kyo / Will',phone:'',email:'',n:'Quoted — have purchased',pre:'S',cycle:4},
-      {id:'r-t1-2',a:'Great Rentals Limited',addr:'110 Montgomerie Rd',contact:'Nick',phone:'021830776',email:'',n:'Also 64 Walls Rd Penrose',pre:'',cycle:4},
-      {id:'r-t1-3',a:'Omega Rental Cars',addr:'3 Kingsford Smith Pl',contact:'Satya',phone:'',email:'',n:'Appointment with Satya and service manager',pre:'',cycle:4},
-      {id:'r-t1-4',a:'Travvia Group',addr:'9 Richard Pearse Drive',contact:'Freya / Trae',phone:'',email:'',n:'Quoted — follow up',pre:'Q',cycle:4},
-      {id:'r-t1-5',a:'Metro Bus',addr:'10 Penihana Pl',contact:'Ahmed',phone:'0272905275',email:'',n:'Ops manager',pre:'',cycle:4},
-    ]},
-    'W1-Wed':{area:'Otahuhu',stops:[
-      {id:'r-w1-1',a:'Vehicle Direct',addr:'28-30 Great South Rd',contact:'Cole / Vik',phone:'',email:'',n:'Aim for group deal',pre:'Q',cycle:4},
-      {id:'r-w1-2',a:'Carplus Auto Service',addr:'Behind Vehicle Direct',contact:'Namir',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-w1-3',a:'VTR Van and Truck',addr:'17 Kaka St',contact:'Jonathan',phone:'',email:'',n:'Customer — floor cleaner',pre:'S',cycle:4},
-      {id:'r-w1-4',a:'Ashtons Crane Hire',addr:'9 Titi St',contact:'Selwynn',phone:'021538590',email:'',n:'Call ahead next visit',pre:'',cycle:4},
-      {id:'r-w1-5',a:'VT Transport',addr:'45 Station Rd',contact:'Eric',phone:'',email:'',n:'Potential good customer',pre:'Q',cycle:4},
-      {id:'r-w1-6',a:'Walters Transport',addr:'20 Walmsley Rd',contact:'Rick',phone:'',email:'',n:'',pre:'S',cycle:4},
-    ]},
-    'W1-Thu':{area:'Papatoetoe',stops:[
-      {id:'r-th1-1',a:'Henderson Cars',addr:'194 Cavendish Rd',contact:'Jasvir',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-th1-2',a:'Tony Allen Auto',addr:'139 Cavendish Rd',contact:'',phone:'',email:'',n:'Customer',pre:'S',cycle:4},
-      {id:'r-th1-3',a:'Trust Motors',addr:'10 Norman Spencer Dr',contact:'Harmon',phone:'',email:'',n:'Demo Cobalt / Dash Dandy',pre:'Q',cycle:4},
-      {id:'r-th1-4',a:'1st Marine / Trucks',addr:'717 Great South Road',contact:'',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-th1-5',a:'Cheapcar',addr:'713A Great South Road',contact:'Phil / Hemant',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-th1-6',a:'Clean Cars NZ',addr:'25B Norman Spencer Dr',contact:'',phone:'',email:'',n:'Moving — keep in touch',pre:'S',cycle:4},
-    ]},
-    'W1-Fri':{area:'Free day',stops:[]},
-    'W2-Mon':{area:'Manukau',stops:[
-      {id:'r-m2-1',a:'Final Touch',addr:'Unit 8/18 Lambie Drive',contact:'Ross',phone:'',email:'',n:'Demo vs Komi H9',pre:'',cycle:4},
-      {id:'r-m2-2',a:'Elite Car Detailing',addr:'Ryan Place',contact:'Nick',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-m2-3',a:'South Auckland Motors Ford',addr:'2 Gladding Place',contact:'Steve',phone:'',email:'',n:'Enviro, platinum, barrel prices',pre:'S',cycle:4},
-      {id:'r-m2-4',a:'ENZED',addr:'Ryan Place',contact:'Ray',phone:'',email:'',n:'Samples given — try handcleaner',pre:'Q',cycle:4},
-      {id:'r-m2-5',a:'Gen 2 Detailers',addr:'4C Freeman Way',contact:'Ronnie / Tom',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-m2-6',a:'Manukau Auto Valet',addr:'Ryan Place',contact:'Dharmesh',phone:'',email:'',n:'Uses Pacer — trial when picks up',pre:'Q',cycle:4},
-      {id:'r-m2-7',a:'NZ Mechanical',addr:'13I Ryan Place',contact:'Jeremy',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-m2-8',a:'Prime Auto Valet',addr:'13 Ryan Place',contact:'Guri',phone:'',email:'',n:'',pre:'S',cycle:4},
-    ]},
-    'W2-Tue':{area:'Wiri',stops:[
-      {id:'r-t2-1',a:'Elite Truck Specialists',addr:'256a Ross Common Rd',contact:'Clifford',phone:'0212780440',email:'',n:'Clifford handles orders',pre:'S',cycle:4},
-      {id:'r-t2-2',a:'Oceanic Cars',addr:'290 Ross Common Rd',contact:'Oosha',phone:'',email:'',n:'Second yard Papakura',pre:'Q',cycle:4},
-      {id:'r-t2-3',a:'LBT Transport',addr:'6 Tacoma Rd',contact:'Leif',phone:'',email:'',n:'Best Mon/Tue — take samples',pre:'',cycle:4},
-      {id:'r-t2-4',a:'Keith Andrews Fuso',addr:'131 Ross Common Rd',contact:'Frank / David',phone:'',email:'',n:'Grooming yard across road',pre:'',cycle:4},
-    ]},
-    'W2-Wed':{area:'Takanini',stops:[
-      {id:'r-w2-1',a:'Kobelco NZ',addr:'8 Great South Road',contact:'Nigel',phone:'',email:'',n:'Workshop foreman',pre:'S',cycle:4},
-      {id:'r-w2-2',a:'South Auckland Motors Ford',addr:'216 Great South Rd',contact:'Craig',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-w2-3',a:'Transcold Group',addr:'5 Marphona Crescent',contact:'Noel',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'r-w2-4',a:'YALE SG Equipment',addr:'10 Morphona St',contact:'Cameron',phone:'',email:'',n:'Jet degreaser / Plus 10 barrel',pre:'S',cycle:4},
-      {id:'r-w2-5',a:'MANHEIM',addr:'19 Spartan Rd',contact:'Kav',phone:'',email:'',n:'Monthly call',pre:'S',cycle:4},
-    ]},
-    'W2-Thu':{area:'Free day',stops:[]},'W2-Fri':{area:'Free day',stops:[]},
-    'W3-Mon':{area:'Mangere',stops:[]},'W3-Tue':{area:'Mangere Prime',stops:[]},'W3-Wed':{area:'Otahuhu',stops:[]},'W3-Thu':{area:'Papatoetoe',stops:[]},'W3-Fri':{area:'Free day',stops:[]},
-    'W4-Mon':{area:'Manukau',stops:[]},'W4-Tue':{area:'Wiri',stops:[]},'W4-Wed':{area:'Takanini',stops:[]},'W4-Thu':{area:'Free day',stops:[]},'W4-Fri':{area:'Free day',stops:[]},
-  },
-  Rep2:{
-    'W1-Mon':{area:'Penrose',stops:[
-      {id:'2-m1-1',a:'TR Group Ltd',addr:'781 Great South Road',contact:'Alex',phone:'',email:'',n:'Armourglow / Fleetwash trial',pre:'S',cycle:4},
-      {id:'2-m1-2',a:'LW Bonney Trucking',addr:'882 Great South Rd',contact:'John',phone:'',email:'',n:'John workshop mgr, Mike owner',pre:'S',cycle:4},
-      {id:'2-m1-3',a:'Elite Grooming Crew',addr:'940C Great South Rd',contact:'Inder',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'2-m1-4',a:'Jayco Auckland',addr:'960 Great South Road',contact:'Mitch',phone:'',email:'',n:'Liam / Gav / Dave in washbay',pre:'S',cycle:4},
-      {id:'2-m1-5',a:'SB European',addr:'3 Greenpark Rd',contact:'Saravan',phone:'',email:'',n:'',pre:'S',cycle:4},
-    ]},
-    'W1-Tue':{area:'Mt Wellington',stops:[
-      {id:'2-t1-1',a:'Auckland City Toyota',addr:'8 Forge Way',contact:'Daniel',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'2-t1-2',a:'The Gloss Detailing',addr:'80 Morrin Rd',contact:'Jack',phone:'027 520 5566',email:'',n:'Stay on top of account',pre:'',cycle:4},
-      {id:'2-t1-3',a:'Marine Detailing',addr:'Tamaki Marine Park',contact:'Harry',phone:'',email:'',n:'Call ahead',pre:'S',cycle:4},
-      {id:'2-t1-4',a:'Just Trucks',addr:'809 Great South Road',contact:'Karen',phone:'',email:'',n:'',pre:'S',cycle:4},
-    ]},
-    'W1-Wed':{area:'Newmarket / Grey Lynn',stops:[
-      {id:'2-w1-1',a:'B&B Auto Detailing',addr:'Upstairs at Nissan',contact:'Bhadreek',phone:'0220729376',email:'',n:'',pre:'S',cycle:4},
-      {id:'2-w1-2',a:'Continental Porsche',addr:'Newmarket',contact:'Liam / Josh',phone:'',email:'',n:'Service and sales grooming',pre:'S',cycle:4},
-      {id:'2-w1-3',a:'Auckland City Toyota',addr:'101 Great North Rd',contact:'Johnny',phone:'',email:'',n:'Johnny detailing mgr',pre:'',cycle:4},
-    ]},
-    'W1-Thu':{area:'Wairau Valley',stops:[
-      {id:'2-th1-1',a:'Caprice Valet',addr:'Wairau Valley',contact:'Raj',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'2-th1-2',a:'Archibald & Shorter',addr:'Wairau Valley',contact:'Aaron',phone:'',email:'',n:'Stone is groomer',pre:'',cycle:4},
-      {id:'2-th1-3',a:'Simon Lucas Mitsubishi',addr:'Wairau Valley',contact:'Allan / Steve',phone:'',email:'',n:'Allan grooming',pre:'S',cycle:4},
-    ]},
-    'W1-Fri':{area:'Albany',stops:[
-      {id:'2-f1-1',a:'Albany Toyota',addr:'Albany',contact:'Grant',phone:'',email:'',n:'',pre:'',cycle:4},
-      {id:'2-f1-2',a:'Takapuna Motor Group',addr:'Takapuna',contact:'James / Lez',phone:'',email:'',n:'Lez is groomer',pre:'',cycle:4},
-    ]},
-    'W2-Mon':{area:'Avondale / Mt Roskill',stops:[
-      {id:'2-m2-1',a:'Legendary Motors',addr:'32 Cartwright Road',contact:'Jade & Carl',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'2-m2-2',a:'Glen Eden Auto',addr:'Glen Eden',contact:'Rhonda & Bruce',phone:'',email:'',n:'4 weekly',pre:'S',cycle:4},
-    ]},
-    'W2-Tue':{area:'Henderson',stops:[
-      {id:'2-t2-1',a:'North West Toyota',addr:'282 Lincoln Road',contact:'Merissa / Jack',phone:'',email:'',n:'',pre:'',cycle:4},
-      {id:'2-t2-2',a:'West City Auto Group',addr:'Henderson',contact:'Rick & Sam',phone:'',email:'',n:'Mike service manager',pre:'S',cycle:4},
-      {id:'2-t2-3',a:'Winger Motors',addr:'Henderson',contact:'Sam / Anthony',phone:'',email:'',n:'Anthony groomer',pre:'',cycle:4},
-    ]},
-    'W2-Wed':{area:'New Lynn',stops:[
-      {id:'2-w2-1',a:'NZ Motors',addr:'5 Stock Street',contact:'Aggi / Abjit',phone:'',email:'',n:'Aggi groomer downstairs',pre:'S',cycle:4},
-      {id:'2-w2-2',a:'Magic Touch Grooming',addr:'3025 Great North Rd',contact:'Bill',phone:'',email:'',n:'',pre:'S',cycle:4},
-    ]},
-    'W2-Thu':{area:'Onehunga',stops:[
-      {id:'2-th2-1',a:'Gast Automotive',addr:'Onehunga',contact:'Gareth',phone:'',email:'',n:'',pre:'S',cycle:4},
-      {id:'2-th2-2',a:'Pearce Brothers',addr:'Onehunga',contact:'Carol / Zac',phone:'',email:'',n:'Zac groomer',pre:'S',cycle:4},
-      {id:'2-th2-3',a:'Auckland Radiator',addr:'Onehunga',contact:'Lee',phone:'',email:'',n:'',pre:'S',cycle:4},
-    ]},
-    'W2-Fri':{area:'West Cold Call',stops:[]},
-    'W3-Mon':{area:'Penrose',stops:[]},'W3-Tue':{area:'Mt Wellington',stops:[]},'W3-Wed':{area:'Newmarket / Grey Lynn',stops:[]},'W3-Thu':{area:'North Shore',stops:[]},'W3-Fri':{area:'Albany',stops:[]},
-    'W4-Mon':{area:'Avondale / Mt Roskill',stops:[]},'W4-Tue':{area:'Henderson',stops:[]},'W4-Wed':{area:'New Lynn',stops:[]},'W4-Thu':{area:'Onehunga',stops:[]},'W4-Fri':{area:'West Cold Call',stops:[]},
-  },
-  Hamilton:{
-    'W1-Mon':{area:'Te Rapa Left',stops:[
-      {id:'h-m1-1',a:'JJ Richards Hamilton',addr:'Te Rapa',contact:'Ryan Webb',phone:'',email:'',n:'Follow up Satin Black demo',pre:'S',cycle:4},
-      {id:'h-m1-2',a:'Terra CAT',addr:'Te Rapa',contact:'Nick / Nathan',phone:'',email:'',n:'Tested and like products',pre:'',cycle:4},
-      {id:'h-m1-3',a:'Waikato Ssang Yong LDV',addr:'Te Rapa',contact:'Angelique',phone:'',email:'',n:'Account open — has purchased',pre:'S',cycle:4},
-      {id:'h-m1-4',a:'Ingham Bottom Workshop',addr:'Te Rapa',contact:'Tony',phone:'',email:'',n:'Brake cleaner, Trucksteam',pre:'',cycle:4},
-      {id:'h-m1-5',a:'Ingham Prestige',addr:'Te Rapa',contact:'Dan Long',phone:'',email:'',n:'Same deal as Dwayne and more',pre:'',cycle:4},
-    ]},
-    'W1-Tue':{area:'Te Rapa Right',stops:[
-      {id:'h-t1-1',a:'Jaels Car Grooming',addr:'Te Rapa',contact:'Jael',phone:'',email:'',n:'Pays each visit',pre:'S',cycle:4},
-      {id:'h-t1-2',a:'Neat Glaze',addr:'Te Rapa',contact:'Hans Bahger',phone:'',email:'',n:'Buys monthly — all our stuff',pre:'S',cycle:4},
-      {id:'h-t1-3',a:'Keith Andrews',addr:'Te Rapa',contact:'Reegan / Sean',phone:'',email:'',n:'Sean service mgr',pre:'',cycle:4},
-    ]},
-    'W1-Wed':{area:'Over the Tracks',stops:[
-      {id:'h-w1-1',a:'Waikato Truckwash',addr:'Hamilton',contact:'Alan',phone:'',email:'',n:'Buys our grooming products',pre:'S',cycle:4},
-      {id:'h-w1-2',a:'Waikato Kia',addr:'Hamilton',contact:'Gary / Marius',phone:'',email:'',n:'Marius orders Armourglow',pre:'',cycle:4},
-      {id:'h-w1-3',a:'Fleet Image',addr:'Hamilton',contact:'Chanelle',phone:'',email:'',n:'Make appt to show full range',pre:'',cycle:4},
-    ]},
-    'W1-Thu':{area:'Tauranga',stops:[]},'W1-Fri':{area:'Cold Call Build',stops:[]},
-    'W2-Mon':{area:'Frankton',stops:[
-      {id:'h-m2-1',a:'Diesel and Turbo',addr:'Frankton',contact:'Suraj / Ivan',phone:'',email:'',n:'Uses us for grooming',pre:'S',cycle:4},
-      {id:'h-m2-2',a:'Auto Valet Ming Centre',addr:'Frankton',contact:'Eddie',phone:'',email:'',n:'Buys most of our stuff',pre:'S',cycle:4},
-    ]},
-    'W2-Tue':{area:'Cambridge',stops:[
-      {id:'h-t2-1',a:'Scania',addr:'Cambridge',contact:'Tabitha / Andrew',phone:'',email:'',n:'Slowly getting all products in',pre:'S',cycle:4},
-      {id:'h-t2-2',a:'Fieldline',addr:'Cambridge',contact:'Glenn',phone:'',email:'',n:'Buying more and more',pre:'S',cycle:4},
-    ]},
-    'W2-Wed':{area:'Morrinsville / Matamata',stops:[]},'W2-Thu':{area:'Cold Call Build',stops:[]},'W2-Fri':{area:'Cold Call Build',stops:[]},
-    'W3-Mon':{area:'Te Rapa Left',stops:[]},'W3-Tue':{area:'Te Rapa Right',stops:[]},'W3-Wed':{area:'Over the Tracks',stops:[]},'W3-Thu':{area:'Tauriko',stops:[]},'W3-Fri':{area:'Cold Call Build',stops:[]},
-    'W4-Mon':{area:'Frankton',stops:[]},'W4-Tue':{area:'Cambridge',stops:[]},'W4-Wed':{area:'Rotorua',stops:[]},'W4-Thu':{area:'Cold Call Build',stops:[]},'W4-Fri':{area:'Cold Call Build',stops:[]},
-  }
+Ron:{
+'W1-Mon':{area:'Mangere',stops:[
+s('r-m1-1','Carpoint','104 Montgomerie Rd','Khurram','','Wants to buy next month','',4),
+s('r-m1-2','ED Pacific Horizon','164 Montgomerie Rd','','','Quoted — follow up','Q',4),
+s('r-m1-3','Wenderkreisen Campervan','197 Montgomerie Rd','','','Uses Kemsol — see early December','',4),
+s('r-m1-4','Aero Automotive','9 Brigade Rd','Stu','','Customer','S',4),
+s('r-m1-5','Trans Mech','15 Andrew Baxter Dr','Keith','','Call back, willing to trial s/s','',4),
+s('r-m1-6','Asplundh','50 Andrew Baxter Dr','','','Quoted — call in','Q',4),
+s('r-m1-7','Interstate Trucking','32 Pavilion Drive','Vejay','','Gave quote','Q',4),
+s('r-m1-8','Hire Ace','12 Pavilion Drive','Karan','','Decision maker Pacer — do quote (notes in Cin7)','',4),
+s('r-m1-9','Endraulic','3 Rennie Drive','Brett','','Quoted — see early December','Q',4),
+s('r-m1-10','Bus Travel New Zealand','2 Rennie Drive','John','','Quoted. Wants to try HSNS — arrange call','Q',4),
+s('r-m1-11','ACM Motorhomes','21 Rennie Drive','Loretta','','Paint protection quoted','Q',4),
+s('r-m1-12','Auto Supershoppe','42 Rennie Drive','','','Uses Wurth — call in again','',4),
+s('r-m1-13','Lucky Campers','5 Aintree Ave','Nathan','','Quote sent — needs follow up','Q',4),
+s('r-m1-14','Travellers Autobarn','C/13 Aintree Ave','','','Use RFM Contract cleaners — get contact from AUS','',4),
+s('r-m1-15','CTG Earthmoving','31 Aintree','','','Call in','',4),
+s('r-m1-16','24/7 Mechanical / NN TSPT','21 Brigade Rd','Navi','021992929','Catch up — discuss haulage and Detailer business','',4),
+s('r-m1-17','Walker Logistics','40 Richard Pearce Dr','','','Visit late Nov','',4),
+s('r-m1-18','TUI Campers','142 Robertson Rd, Mangere East','Paul','','Needs a quote — H/O Christchurch','',4),
+s('r-m1-19','Kiwi Campers','8/197 Montgomerie Rd','Brema','','Moben mechanic. Sort gloves out — not good','S',4),
+]},
+'W1-Tue':{area:'Mangere Prime',stops:[
+s('r-t1-1','Ezu Car Rental','67 Montgomerie Rd','Kyo / Will','','Quoted — have purchased. Will is owner/decisions','S',4),
+s('r-t1-2','Great Rentals Limited','110 Montgomerie Rd','Nick','021830776','Also 64 Walls Rd Penrose — call ahead','',4),
+s('r-t1-3','Omega Rental Cars','3 Kingsford Smith Place','Satya','','Appointment for meeting with Satya and service manager','',4),
+s('r-t1-4','Travvia Group — Juicy Rentals','9 Richard Pearse Drive','Freya / Trae','','Quoted — follow up Freya and Trae (all locations)','Q',4),
+s('r-t1-5','Garage Automotive 10','1/22 Andrew Baxter Drive','Jody','','Call in — busy guy','',4),
+s('r-t1-6','Metro Bus','10 Penihana Pl','Ahmed / Jaggi','0272905275','Ops managers — sorting acc','',4),
+]},
+'W1-Wed':{area:'Otahuhu',stops:[
+s('r-w1-1','Vehicle Direct','28-30 Great South Rd','Cole / Vik','','Cole sales lad — Vik Branch Manager (group deal)','Q',4),
+s('r-w1-2','Carplus Auto Service','Behind Vehicle Direct','Namir','','','S',4),
+s('r-w1-3','All yards in the strip','Great South Rd','','','Given prices — need to follow up','',4),
+s('r-w1-4','Patel Motors','Otahuhu','Patel','','Keen when stock runs down','Q',4),
+s('r-w1-5','Otahuhu Car Detailing','Puketi Rd','','','Has purchased — may try a few chems','S',4),
+s('r-w1-6','Topline Paint and Panel','19 Pukeiti Road','James Ingram','','','',4),
+s('r-w1-7','Van and Truck Repairs VTR','17 Kaka St Otahuhu','Jonathan','','Customer — also across rd. Floor cleaner','S',4),
+s('r-w1-8','Royans','20 Kahu St','','','Follow up AUS — who does Royans','',4),
+s('r-w1-9','Ashtons Crane Hire','9 Titi St','Selwynn','021538590','Call ahead next visit','',4),
+s('r-w1-10','Truck Fix','18 Tui St','Ausheel','0211524774','Ops Mgr — cold call ahead','',4),
+s('r-w1-11','Kauther Motors Company','13 Moa Street','','','','',4),
+s('r-w1-12','Greyhound Tow/spares','52 Huia Rd','Matt','','','',4),
+s('r-w1-13','K&P Automotive','2A Hokunui Road','','','','S',4),
+s('r-w1-14','M S Auto Mechanical','32 Saleyards Road','','','','',4),
+s('r-w1-15','VT Transport','45 Station Rd','Eric / Ajesh','','Fleet controller — potential good cust','Q',4),
+s('r-w1-16','Akon Heavy Diesel','82 Station Rd','Simran','','Also owns motorhuntz and truck co','',4),
+s('r-w1-17','The Garage','20 Walmsley Rd','Daniel','','','',4),
+s('r-w1-18','Walters Transport Ltd','20 Walmsley Rd','Rick','','','S',4),
+s('r-w1-19','GM Car Wholesalers','Otahuhu','Salmon / Ali','','Ali manages grooming','S',4),
+s('r-w1-20','Motokare','Otahuhu','Suraj','','Manages panel/detailing bay downstairs','S',4),
+s('r-w1-21','HighBeam','Otahuhu','Sanjit','','Domd Cobalt','',4),
+s('r-w1-22','Detailer — Pardeep','15-8 Saleyards Rd','Pardeep','','Referred by Sonny at JD Motors','',4),
+]},
+'W1-Thu':{area:'Papatoetoe',stops:[
+s('r-th1-1','Henderson Cars/Mahindra','194 Cavendish Rd','Jasvir','','','S',4),
+s('r-th1-2','Tony Allen Auto Service','139 Cavendish Rd','','','Customer','S',4),
+s('r-th1-3','South Suburban Panelbeating','Papatoetoe','Ian / Frank','','Frank is owner','',4),
+s('r-th1-4','Trust Motors Limited','10 Norman Spencer Dr','Harmon','','Grooming bay — demo Cobalt / Dash Dandy','Q',4),
+s('r-th1-5','William Gill & Sons Ltd','72 Grayson Ave','Mike','','Manages washbay — quote sent, revisit end Nov','',4),
+s('r-th1-6','Number 1 Motors','5 Brett Ave','','','','',4),
+s('r-th1-7','1st Marine / Trucks','717 Great South Road','','','','S',4),
+s('r-th1-8','Cheapcar','713A Great South Road','Phil / Hemant','','','S',4),
+s('r-th1-9','Kiwi Motors','725 Great South Rd','Bhanu','','See card','',4),
+s('r-th1-10','Trend Motors','725 Great South Rd','Bhuvnesh / Yuvi','','','',4),
+s('r-th1-11','Tarnica Cars','717 Great South Road','','','Gave prices — may req 2 weeks','',4),
+s('r-th1-12','Clean Cars NZ Limited','25B Norman Spencer Dr','','','Moving to new premises — keep in touch','S',4),
+]},
+'W1-Fri':{area:'Free day',stops:[]},
+'W2-Mon':{area:'Manukau',stops:[
+s('r-m2-1','Final Touch','Unit 8/18 Lambie Drive','Ross','','Keen to line up demo vs Komi H9 Compound','',4),
+s('r-m2-2','Lube King','11 Bakerfield Place','','','','Q',4),
+s('r-m2-3','Elite Car Detailing','End of Ryan Place','Nick','','','S',4),
+s('r-m2-4','European Auto Wreckers','Manukau','Kerwin / Shane','','Shane handles workshop orders','S',4),
+s('r-m2-5','South Auckland Motors Ford','2 Gladding Place','Steve / Simon','','Enviro, platinum — speak to Simon re barrel prices','S',4),
+s('r-m2-6','Budget Car Sales (Manukau)','676 Great South Rd','Malcolm','','Behind AP Eagers — Malcolm hasn\'t been available','',4),
+s('r-m2-7','Southern Autos Manukau','250 Bakerfield Place','Mark','','Part of South Akl Motors','',4),
+s('r-m2-8','ENZED','Ryan Place','Ray','','Shop mgr — samples given. Try handcleaner next time. Uses Wurth','Q',4),
+s('r-m2-9','Gen 2 Detailers','4C Freeman Way','Ronnie / Tom','','','S',4),
+s('r-m2-10','Manukau Auto Valet','Ryan Place','Dharmesh','','Uses Pacer — cheap deals, maybe trial when picks up','Q',4),
+s('r-m2-11','Ideal Panel and Paint','116D Cavendish Dr','','','COD purchased previously','S',4),
+s('r-m2-12','Manukau Toyota','Gladding Place','','','Cold Call','',4),
+s('r-m2-13','Manukau Vehicle Servicing','13 Ryan Place','Juned','','Quoted','Q',4),
+s('r-m2-14','NZ Mechanical','13I Ryan Place','Jeremy','','Mechanical / panel shop','S',4),
+s('r-m2-15','Prime Auto Valet Ltd','13 Ryan Place','Guri','','','S',4),
+s('r-m2-16','Elite Tyre','6 Keith Hay Dr','','','Try brake cleaner, headlight compound demos','',4),
+s('r-m2-17','Nautilus Detailing','4/6-8 Keith Hay','Arjun','','Been twice — no luck yet','',4),
+]},
+'W2-Tue':{area:'Wiri',stops:[
+s('r-t2-1','Elite Truck Specialists','256a Ross Common Rd','Stephen / Clifford','0212780440','Clifford handles orders','S',4),
+s('r-t2-2','Oceanic Cars','290 Ross Common Rd','Oosha','','Second yard Papakura','Q',4),
+s('r-t2-3','Sabeto','18 Oak Rd','Zhu','0277775665','','Q',4),
+s('r-t2-4','LBT Transport','6 Tacoma Rd','Leif','','Owner — best Mon/Tues, take samples / quote','',4),
+s('r-t2-5','TruckStop','2 Tacoma Rd','Mark / Shelvin','0274582892','Mgr — make appt, call Shelvin ref Turin','',4),
+s('r-t2-6','Angel Transport Ebony','8 Balderwood','','','','',4),
+s('r-t2-7','Salters Cartage','5 Balderwood','Alex','','Visit end Nov — call office for access','',4),
+s('r-t2-8','JJ\'s Waste','67 Dalgety','','','','',4),
+s('r-t2-9','Caryard — Oosha','Wiri','','','Get all details next Wiri round','',4),
+s('r-t2-10','Keith Andrews Fuso','131 Ross Common Rd','Frank / David Wong','','Parts Mgr Frank & Grooming Yard across the road','',4),
+s('r-t2-11','Palfinger','Wiri','','','Send Quote — incl cable ties etc','',4),
+s('r-t2-12','Thermo King','Wiri','Mark Heeney','','Ref Elite Clifford','',4),
+]},
+'W2-Wed':{area:'Takanini',stops:[
+s('r-w2-1','Kobelco New Zealand','8 Great South Road','Nigel','','Workshop foreman','S',4),
+s('r-w2-2','Automax Cars Limited','10 Great South Rd','','','','S',4),
+s('r-w2-3','Other Car yard next door','10 Great South Rd','','','Cheap quote / demo','',4),
+s('r-w2-4','South Auckland Motors Ford','216-218 Great South Road','Craig','','','S',4),
+s('r-w2-5','Transport Mechanical','101 Spartan Rd','Logan','','','S',4),
+s('r-w2-6','Transcold Group','5 Marphona Crescent','Noel','','','S',4),
+s('r-w2-7','YALE — SG Equipment Ltd','10 Morphona St','Cameron / Amanda','','Uses Forch — jet degreaser / Plus 10 barrel','S',4),
+s('r-w2-8','Vehicle Direct Takanini','206 Great South Road','','','','',4),
+s('r-w2-9','MANHEIM','19 Spartan Rd','Kav / Maoki','','Kav calls as required / Maoki keen Jan','S',4),
+s('r-w2-10','VahuVata Civil Works','11 Morphona Cres','Nafiz / Payal','','Monthly call','S',4),
+]},
+'W2-Thu':{area:'Free day',stops:[]},
+'W2-Fri':{area:'Free day',stops:[]},
+'W3-Mon':{area:'Mangere',stops:[
+s('r-m3-1','Carpoint','104 Montgomerie Rd','Khurram','','Wants to buy next month','',4),
+s('r-m3-2','ED Pacific Horizon','164 Montgomerie Rd','','','Quoted — follow up','Q',4),
+s('r-m3-3','Wenderkreisen Campervan','197 Montgomerie Rd','','','Uses Kemsol — see early December','',4),
+s('r-m3-4','Aero Automotive','9 Brigade Rd','Stu','','Customer','S',4),
+s('r-m3-5','Trans Mech','15 Andrew Baxter Dr','Keith','','Call back, willing to trial s/s','',4),
+s('r-m3-6','Asplundh','50 Andrew Baxter Dr','','','Quoted — call in','Q',4),
+s('r-m3-7','Interstate Trucking','32 Pavilion Drive','Vejay','','Gave quote','Q',4),
+s('r-m3-8','Hire Ace','12 Pavilion Drive','Karan','','Decision maker Pacer — do quote','',4),
+s('r-m3-9','Endraulic','3 Rennie Drive','Brett','','Quoted — see early December','Q',4),
+s('r-m3-10','Bus Travel New Zealand','2 Rennie Drive','John','','Quoted. Wants to try HSNS','Q',4),
+s('r-m3-11','ACM Motorhomes','21 Rennie Drive','Loretta','','Paint protection quoted','Q',4),
+s('r-m3-12','Auto Supershoppe','42 Rennie Drive','','','Uses Wurth — call in again','',4),
+s('r-m3-13','Lucky Campers','5 Aintree Ave','Nathan','','Quote sent — needs follow up','Q',4),
+s('r-m3-14','Travellers Autobarn','C/13 Aintree Ave','','','Use RFM Contract cleaners — get contact from AUS','',4),
+s('r-m3-15','CTG Earthmoving','31 Aintree','','','Call in','',4),
+s('r-m3-16','24/7 Mechanical','21 Brigade Rd','Navi','021992929','Catch up — discuss haulage and Detailer business','',4),
+s('r-m3-17','Walker Logistics','40 Richard Pearce Dr','','','Visit late Nov','',4),
+s('r-m3-18','TUI Campers','142 Robertson Rd, Mangere East','Paul','','Needs a quote — H/O Christchurch','',4),
+s('r-m3-19','Kiwi Campers','8/197 Montgomerie Rd','Brema','','Purchased — don\'t like gloves, discuss','S',4),
+]},
+'W3-Tue':{area:'Mangere Prime',stops:[
+s('r-t3-1','Ezu Car Rental','67 Montgomerie Rd','Kyo / Will','','Quoted — have purchased','S',4),
+s('r-t3-2','Great Rentals Limited','110 Montgomerie Rd','Nick','021830776','Also 64 Walls Rd Penrose — call ahead','',4),
+s('r-t3-3','Omega Rental Cars','3 Kingsford Smith Place','Satya','','Appointment with Satya and service manager','',4),
+s('r-t3-4','Travvia Group — Juicy Rentals','9 Richard Pearse Drive','Freya / Trae','','Quoted — follow up Freya and Trae','Q',4),
+s('r-t3-5','Garage Automotive 10','1/22 Andrew Baxter Drive','Jody','','Call in — busy guy','',4),
+s('r-t3-6','Metro Bus','10 Penihana Pl','Ahmed / Jaggi','0272905275','Ops managers','',4),
+]},
+'W3-Wed':{area:'Otahuhu',stops:[
+s('r-w3-1','Vehicle Direct','28-30 Great South Rd','Cole / Vik','','Aim to do group deal','Q',4),
+s('r-w3-2','Carplus Auto Service','Behind Vehicle Direct','Namir','','','S',4),
+s('r-w3-3','All yards in the strip','Great South Rd','','','Need to follow up','',4),
+s('r-w3-4','Patel Motors','Otahuhu','Patel','','Keen when stock runs down','Q',4),
+s('r-w3-5','Otahuhu Car Detailing','Puketi Rd','','','Has purchased — may try a few chems','S',4),
+s('r-w3-6','Topline Paint and Panel','19 Pukeiti Road','James Ingram','','','',4),
+s('r-w3-7','Van and Truck Repairs VTR','17 Kaka St','Jonathan','','Customer — floor cleaner','S',4),
+s('r-w3-8','Royans','20 Kahu St','','','Follow up AUS — who does Royans','',4),
+s('r-w3-9','Ashtons Crane Hire','9 Titi St','Selwynn','021538590','Call ahead next visit','',4),
+s('r-w3-10','Truck Fix','18 Tui St','Ausheel','0211524774','Ops Mgr — cold call ahead','',4),
+s('r-w3-11','Kauther Motors','13 Moa Street','','','','',4),
+s('r-w3-12','Greyhound Tow/spares','52 Huia Rd','Matt','','','',4),
+s('r-w3-13','K&P Automotive','2A Hokunui Road','','','','S',4),
+s('r-w3-14','M S Auto Mechanical','32 Saleyards Road','','','','',4),
+s('r-w3-15','VT Transport','45 Station Rd','Eric / Ajesh','','Potential good customer','Q',4),
+s('r-w3-16','Akon Heavy Diesel','82 Station Rd','Simran','','Also owns motorhuntz and truck co','',4),
+s('r-w3-17','The Garage','20 Walmsley Rd','Daniel','','','',4),
+s('r-w3-18','Walters Transport Ltd','20 Walmsley Rd','Rick','','','S',4),
+s('r-w3-19','GM Car Wholesalers','Otahuhu','Salmon / Ali','','Ali manages grooming','S',4),
+s('r-w3-20','Motokare','Otahuhu','Suraj','','Manages panel/detailing bay','S',4),
+s('r-w3-21','HighBeam','Otahuhu','Sanjit','','Domd Cobalt','',4),
+s('r-w3-22','Detailer — Pardeep','15-8 Saleyards Rd','Pardeep','','Referred by Sonny at JD Motors','',4),
+]},
+'W3-Thu':{area:'Papatoetoe',stops:[
+s('r-th3-1','Henderson Cars/Mahindra','194 Cavendish Rd','Jasvir','','','S',4),
+s('r-th3-2','Tony Allen Auto Service','139 Cavendish Rd','','','Customer','S',4),
+s('r-th3-3','South Suburban Panelbeating','Papatoetoe','Ian / Frank','','Frank is owner','',4),
+s('r-th3-4','Trust Motors Limited','10 Norman Spencer Dr','Harmon','','Demo Cobalt / Dash Dandy','Q',4),
+s('r-th3-5','William Gill & Sons Ltd','72 Grayson Ave','Mike','','Quote sent — revisit end Nov','',4),
+s('r-th3-6','Number 1 Motors','5 Brett Ave','','','','',4),
+s('r-th3-7','1st Marine / Trucks','717 Great South Road','','','','S',4),
+s('r-th3-8','Cheapcar','713A Great South Road','Phil / Hemant','','','S',4),
+s('r-th3-9','Kiwi Motors','725 Great South Rd','Bhanu','','See card','',4),
+s('r-th3-10','Trend Motors','725 Great South Rd','Bhuvnesh / Yuvi','','','',4),
+s('r-th3-11','Tarnica Cars','717 Great South Road','','','Gave prices — may req 2 weeks','',4),
+s('r-th3-12','Clean Cars NZ Limited','25B Norman Spencer Dr','','','Moving — keep in touch','S',4),
+]},
+'W3-Fri':{area:'Free day',stops:[]},
+'W4-Mon':{area:'Manukau',stops:[
+s('r-m4-1','Final Touch','Unit 8/18 Lambie Drive','Ross','','Demo vs Komi H9 Compound','',4),
+s('r-m4-2','Lube King','11 Bakerfield Place','','','','Q',4),
+s('r-m4-3','Elite Car Detailing','End of Ryan Place','Nick','','','S',4),
+s('r-m4-4','European Auto Wreckers','Manukau','Kerwin / Shane','','Shane handles workshop orders','S',4),
+s('r-m4-5','South Auckland Motors Ford','2 Gladding Place','Steve / Simon','','Enviro, platinum, barrel prices','S',4),
+s('r-m4-6','Budget Car Sales (Manukau)','676 Great South Rd','Malcolm','','Hasn\'t been available','',4),
+s('r-m4-7','Southern Autos Manukau','250 Bakerfield Place','Mark','','Part of South Akl Motors','',4),
+s('r-m4-8','ENZED','Ryan Place','Ray','','Try handcleaner next time — uses Wurth','Q',4),
+s('r-m4-9','Gen 2 Detailers','4C Freeman Way','Ronnie / Tom','','','S',4),
+s('r-m4-10','Manukau Auto Valet','Ryan Place','Dharmesh','','Uses Pacer — trial when picks up','Q',4),
+s('r-m4-11','Ideal Panel and Paint','116D Cavendish Dr','','','COD purchased previously','S',4),
+s('r-m4-12','Manukau Toyota','Gladding Place','','','Cold Call','',4),
+s('r-m4-13','Manukau Vehicle Servicing','13 Ryan Place','Juned','','Quoted','Q',4),
+s('r-m4-14','NZ Mechanical','13I Ryan Place','Jeremy','','Mechanical / panel shop','S',4),
+s('r-m4-15','Prime Auto Valet Ltd','13 Ryan Place','Guri','','','S',4),
+s('r-m4-16','Elite Tyre','6 Keith Hay Dr','','','Try brake cleaner, headlight compound demos','',4),
+s('r-m4-17','Nautilus Detailing','4/6-8 Keith Hay','Arjun','','Been twice — no luck yet','',4),
+]},
+'W4-Tue':{area:'Wiri',stops:[
+s('r-t4-1','Elite Truck Specialists','256a Ross Common Rd','Stephen / Clifford','0212780440','Clifford handles orders','S',4),
+s('r-t4-2','Oceanic Cars','290 Ross Common Rd','Oosha','','Second yard Papakura','Q',4),
+s('r-t4-3','Sabeto','18 Oak Rd','Zhu','0277775665','','Q',4),
+s('r-t4-4','LBT Transport','6 Tacoma Rd','Leif','','Best Mon/Tues — take samples / quote','',4),
+s('r-t4-5','TruckStop','2 Tacoma Rd','Mark','0274582892','Mgr — make appt, call Shelvin ref Turin','',4),
+s('r-t4-6','Angel Transport Ebony','8 Balderwood','','','','',4),
+s('r-t4-7','Salters Cartage','5 Balderwood','Alex','','Visit end Nov — call office for access','',4),
+s('r-t4-8','JJ\'s Waste','67 Dalgety','','','','',4),
+s('r-t4-9','Caryard — Oosha','Wiri','','','Get all details next Wiri round','',4),
+s('r-t4-10','Keith Andrews Fuso','131 Ross Common Rd','Frank / David Wong','','Parts Mgr & Grooming Yard across road','',4),
+]},
+'W4-Wed':{area:'Takanini',stops:[
+s('r-w4-1','Kobelco New Zealand','8 Great South Road','Nigel','','Workshop foreman','S',4),
+s('r-w4-2','Automax Cars Limited','10 Great South Rd','','','','S',4),
+s('r-w4-3','Other Car yard next door','10 Great South Rd','','','Cheap quote / demo','',4),
+s('r-w4-4','South Auckland Motors Ford','216-218 Great South Road','Craig','','','S',4),
+s('r-w4-5','Transport Mechanical','101 Spartan Rd','Logan','','','S',4),
+s('r-w4-6','Transcold Group','5 Marphona Crescent','Noel','','','S',4),
+s('r-w4-7','YALE — SG Equipment Ltd','10 Morphona St','Cameron / Amanda','','Jet degreaser / Plus 10 barrel','S',4),
+s('r-w4-8','Vehicle Direct Takanini','206 Great South Road','','','','',4),
+s('r-w4-9','MANHEIM','19 Spartan Rd','Kav / Maoki','','Monthly call','S',4),
+s('r-w4-10','VahuVata Civil Works','11 Morphona Cres','Nafiz / Payal','','Monthly call','S',4),
+]},
+'W4-Thu':{area:'Free day',stops:[]},
+'W4-Fri':{area:'Free day',stops:[]},
+},
+
+Rep2:{
+'W1-Mon':{area:'Penrose',stops:[
+s('2-m1-1','TR Group Ltd','781 Great South Road','Alex','','Discuss Armourglow / Fleetwash trial and Gantry Wash XT88','S',4),
+s('2-m1-2','Oracle Autos Penrose','721 Great South Road','Gayan','','','S',4),
+s('2-m1-3','Renew Car','701D Great South Rd','Oliver','','Happy with wheel king sample','',4),
+s('2-m1-4','Corporate Cars','18 Industry Rd Penrose','Corey','0272035701','Call ahead','',4),
+s('2-m1-5','Vision Auto Sales','89 Station Rd','John / Jeremy','','Jeremy looks after grooming','S',4),
+s('2-m1-6','LW Bonney Trucking','882 Great South Rd','John / Mike','','John workshop mgr, Mike owner','S',4),
+s('2-m1-7','Elite Grooming Crew','940C Great South Rd','Inder','','','S',4),
+s('2-m1-8','Jayco Auckland','960 Great South Road','Mitch','','Liam / Gav / Dave in washbay','S',4),
+s('2-m1-9','Carson Workshop','11A Botha Rd','Al','','','S',4),
+s('2-m1-10','SB European','3 Greenpark Rd','Saravan','','','S',4),
+s('2-m1-11','Manikaran Autos','505 Great South Rd','Jasbir','','','S',4),
+s('2-m1-12','Beacham European','491 Great South Road','Alex','','','S',4),
+s('2-m1-13','City Motor Group','742 Great South Road','Allan','','','S',4),
+s('2-m1-14','GVI','Penrose','Nicolas / Lan','','Nicolas buying from Ron, Lan manager','',4),
+s('2-m1-15','Winger Motors','Penrose','David / Sam','','David service mgr, Sam grooming mgr','',4),
+s('2-m1-16','KCM Car Valet','Penrose','Brad','','Starting to buy','',4),
+s('2-m1-17','Toyota Greenlane','Greenlane','Ricky / Gert','','Ricky grooming mgr, Gert service mgr','',4),
+s('2-m1-18','Archibald & Shorter','Greenlane','Brendon / Mark','','Mark service manager','',4),
+s('2-m1-19','Carfe','Greenlane','Boston','','','',4),
+s('2-m1-20','Armstrong','Greenlane','Helena','','Helena service manager','',4),
+s('2-m1-21','Trade Post','Greenlane','Stewart','','','',4),
+]},
+'W1-Tue':{area:'Mt Wellington / Greenlane',stops:[
+s('2-t1-1','NZ Cheap Cars','500 Ellerslie Panmure Hwy','Pardeep','','Pardeep is detailing doctor (contracts to yard)','S',4),
+s('2-t1-2','OKAY Motors','516 Ellerslie Panmure Hwy','Trent / Ken','','','S',4),
+s('2-t1-3','Auckland City Toyota','8 Forge Way','Daniel','','','S',4),
+s('2-t1-4','Chamz Cars Limited','11 Forge Way','Neil','','','S',4),
+s('2-t1-5','Fasst Used','4/6 Mountwell Crescent','Van (groomer)','','','S',4),
+s('2-t1-6','Hire Ace','Mt Wellington','Ireen','','','S',4),
+s('2-t1-7','Metro Hire','1 Morrin Rd','Gavin','','','S',4),
+s('2-t1-8','The Gloss Detailing','80 Morrin Rd','Jack','027 520 5566','Stay on top of account','',4),
+s('2-t1-9','Wilkinson Trading','535 Ellerslie Panmure Hwy','Blair','','Reconnect / call ahead','',4),
+s('2-t1-10','Central Group','Mt Wellington','Andrew (Ops Mgr)','','','',4),
+s('2-t1-11','Scarbro Civil','5 Hannigan Dr','Paul','','Boss is Artar — go back in Jan','',4),
+s('2-t1-12','Dr Diesel','36b Hannigan Dr','Stu / Peter','','Owner is Cam','',4),
+s('2-t1-13','Marine Detailing','Tamaki Marine Park','Harry','','Call ahead','S',4),
+s('2-t1-14','Robur Hire','34 Gabador Pl','Grant','','','S',4),
+s('2-t1-15','Orix Vehicle Sales','1080 Great South Rd','Simone','','Do proposal, email quote','',4),
+s('2-t1-16','Just Trucks','809 Great South Road','Karen','','','S',4),
+s('2-t1-17','The Coating Lab','Mt Wellington','Ryan','','Gave samples','Q',4),
+s('2-t1-18','The PPF','Mt Wellington','Brian','','','S',4),
+]},
+'W1-Wed':{area:'Newmarket / Grey Lynn',stops:[
+s('2-w1-1','B&B Auto Detailing','Upstairs at Nissan','Bhadreek / Bhavik','0220729376','','S',4),
+s('2-w1-2','Continental VW','Newmarket','Brad Millen','','Service manager','Q',4),
+s('2-w1-3','Continental Porsche','Newmarket','Liam / Josh','','Service and sales grooming','S',4),
+s('2-w1-4','Continental Audi','Newmarket','Scott Windelburn','','Sales mgr — nil yet','',4),
+s('2-w1-5','Lexus','Newmarket','Graeme','','Service mgr — met Carl grooming, positive','',4),
+s('2-w1-6','BMW','Newmarket','Vishal Patel','021776069','Also looks after used and Mini','',4),
+s('2-w1-7','ATG Autocare','407 Broadway','Allan / Daniel','','Daniel orders','',4),
+s('2-w1-8','Kia','Newmarket','Nick (Service Mgr)','','Workshop gear — Nauticus contractor','',4),
+s('2-w1-9','Mini','381-3 Broadway','Paul','','Happy to chat — Vishal in charge at BMW','',4),
+s('2-w1-10','Mercedes','Newmarket','Kassi / Nick Taylor','','Nick is service mgr','',4),
+s('2-w1-11','Rubber Dub','131 Manukau Rd Epsom','Ramon','','All barrels, all pacer','Q',4),
+s('2-w1-12','Honda','455 Broadway Rd','Emile / Antonia','','No luck in 24','',4),
+s('2-w1-13','Jordan Panel','364 Great North Rd','Tim','','','',4),
+s('2-w1-14','Auckland City Toyota','101 Great North Rd','Johnny / Richard','','Johnny detailing mgr, Richard service mgr','',4),
+s('2-w1-15','Selected Autos','327 Great North Rd','Glen','','','',4),
+s('2-w1-16','Giltrap Porsche/VW','Grey Lynn','Tim','','Bring green and yellow pads','',4),
+s('2-w1-17','Ford (AP Eagers)','Grey Lynn','Chris','','','',4),
+]},
+'W1-Thu':{area:'Wairau Valley',stops:[
+s('2-th1-1','Caprice Valet','Wairau Valley','Raj','','','S',4),
+s('2-th1-2','Winger Sale','Wairau Valley','Charlie & Andrew','','','',4),
+s('2-th1-3','Continental BMW','Wairau Valley','Graham','','','',4),
+s('2-th1-4','BMW Motorad','Wairau Valley','Steve','','','',4),
+s('2-th1-5','Cycle Spot','Wairau Valley','Zac','','','',4),
+s('2-th1-6','Archibald & Shorter','Wairau Valley','Aaron / Stone','','Stone is groomer','',4),
+s('2-th1-7','Winger Service','Wairau Valley','Vicus','','','',4),
+s('2-th1-8','JB Panel & Paint','Wairau Valley','Blaze','','','',4),
+s('2-th1-9','Ultimate Diesel Solutions','Wairau Valley','Andrea','','','',4),
+s('2-th1-10','Engine Specialists','Wairau Valley','Glen / Andrew','','Glen owner, Andrew manager — gave sample to Mike','',4),
+s('2-th1-11','Precision Auto Works','Wairau Valley','Kelvin','','','',4),
+s('2-th1-12','Prestige Autos','Wairau Valley','','','','',4),
+s('2-th1-13','Auto Pro','Wairau Valley','Rob','','','',4),
+s('2-th1-14','Giltrap Audi','Wairau Valley','Aaron','','Gave samples to groomers','',4),
+s('2-th1-15','Giltrap North Shore','North Shore','Tony','','','',4),
+s('2-th1-16','Simon Lucas Mitsubishi','Wairau Valley','Allan / Steve','','Allan grooming, Steve service mgr','S',4),
+s('2-th1-17','NST','Wairau Valley','Jason / Victor','','Victor contract grooming','',4),
+s('2-th1-18','Ingham Nissan','Wairau Valley','Ron','','','',4),
+s('2-th1-19','Andrew Sims','Wairau Valley','Rob','','','',4),
+s('2-th1-20','Midas','Wairau Valley','Eric','','Sent pricing','',4),
+s('2-th1-21','Renew Car','Wairau Valley','Steve','','Buying','S',4),
+]},
+'W1-Fri':{area:'Albany',stops:[
+s('2-f1-1','Final Touch','Albany','Gordon & Harrison','','','',4),
+s('2-f1-2','Line Painting','Albany','Sam','','Gave sample of graffiti elim','',4),
+s('2-f1-3','Colour Sharp','Albany','Cara & Jason','','','',4),
+s('2-f1-4','Bellars Motor Works','Albany','Ken','','','',4),
+s('2-f1-5','Albany Toyota','Albany','Grant','','','',4),
+s('2-f1-6','Firth Cement','Albany','Jordan','','','',4),
+s('2-f1-7','AB Equipment','Albany','Rigan','','','',4),
+s('2-f1-8','Porter Hire','Albany','CJ','','','',4),
+s('2-f1-9','Albany Car Valet','Albany','Bin','','','',4),
+s('2-f1-10','Ridge Road Quarry','Albany','Dean','','','',4),
+s('2-f1-11','Elite Motors','Albany','Forrest / Elliot / Hank','','','',4),
+s('2-f1-12','Takapuna Car Valet','Takapuna','Paul','','','',4),
+s('2-f1-13','Takapuna Motor Group','Takapuna','James / Lez','','Lez is groomer','',4),
+s('2-f1-14','The Wrap Shop','Takapuna','Hayden / David','','','',4),
+s('2-f1-15','Ace EV','Takapuna','Dan','','','',4),
+s('2-f1-16','Silverdale — Prontohire','Silverdale','Eugene / Warwick','','Gave samples of enviroclean & AG','',4),
+s('2-f1-17','Vantage RV','Silverdale','Clint','','','',4),
+s('2-f1-18','Golden Contracting','Silverdale','Jacinda','021464565','No luck with Mark — keep trying','',4),
+]},
+'W2-Mon':{area:'Avondale / Mt Roskill',stops:[
+s('2-m2-1','Vuksich & Borich','45/51 Fremlin Place','Murray','027 494 9087','Make appt','',4),
+s('2-m2-2','Tongue Performance','Avondale','JP','','','',4),
+s('2-m2-3','Euro Sparx','Avondale','Kiro','','','',4),
+s('2-m2-4','Kaar Services & Repair','Avondale','Blair','','','',4),
+s('2-m2-5','Rock & Rumble','747 Rosebank Road','Mark','021686533','','',4),
+s('2-m2-6','Jeez Motors','303a Rosebank Road','AJ & Nigel','','','',4),
+s('2-m2-7','Signet Motors','4135 Great North Road','Niles / Kinil','021 269 1085','Niles is groomer','',4),
+s('2-m2-8','Legendary Motors','32 Cartwright Road','Jade & Carl','','','S',4),
+s('2-m2-9','Greenwise Cars','34 Cartwright Road','Nick & Tom','021 167 7405','','',4),
+s('2-m2-10','Glen Eden Auto','Glen Eden','Rhonda & Bruce','','4 weekly','S',4),
+s('2-m2-11','Rubbish Direct','Avondale','Weasley','','','',4),
+s('2-m2-12','We Care Auto Repair','234 Richardson Road','Nawaz','','Ref by Faraz at Esteem Motors','',4),
+s('2-m2-13','Mr Motors','Mt Roskill','Jilly','','','',4),
+s('2-m2-14','Kiwi Cheap Cars','Mt Roskill','Roy','','','',4),
+s('2-m2-15','Aroha Motors','Mt Roskill','Ahpi','','','',4),
+]},
+'W2-Tue':{area:'Henderson / Glendene',stops:[
+s('2-t2-1','North West Toyota','282 Lincoln Road','Merissa / Jack','','','',4),
+s('2-t2-2','Jan Japan','320 Lincoln Rd','Shahzaib','','','S',4),
+s('2-t2-3','Novino Motors (Glen Eden)','360 West Coast Road','','0225361363','Call first','S',4),
+s('2-t2-4','Croydons','Henderson','Glen','027 571 6505','','',4),
+s('2-t2-5','John Andrew Ford','Henderson','Rob (Service Mgr)','','','',4),
+s('2-t2-6','West City Auto Group','Henderson','Rick & Sam / Mike','','Mike service manager','S',4),
+s('2-t2-7','LDV','126 Central Park Drive','Morne','027 335 3897','','',4),
+s('2-t2-8','Sithari Cars','24 Bruce McLaren Road','Param','027 314 1991','','',4),
+s('2-t2-9','Precision Autos','23 Bruce McLaren Road','Ali & Roman','021 982 992','','',4),
+s('2-t2-10','RPM','16 Heremai Street','Emir','021 027 08215','','',4),
+s('2-t2-11','The Car Warehouse','Henderson','Mark / Jimmy','','Jimmy is groomer','S',4),
+s('2-t2-12','Winger Motors','Henderson','Sam / Anthony','','Anthony groomer','',4),
+s('2-t2-13','Wheels Online','Henderson','Phillip / Raymond','','','',4),
+s('2-t2-14','Importify','Henderson','Joel / Andrew','','Andrew owner','',4),
+s('2-t2-15','Fleet Specialist','Henderson','Kevin','','','',4),
+]},
+'W2-Wed':{area:'New Lynn',stops:[
+s('2-w2-1','NZ Motors','5 Stock Street','Aggi / Abjit','','Aggi groomer downstairs','S',4),
+s('2-w2-2','Stock Street Autos','1/6 Stock Street','MJ & Jordan','','Every couple of months','',4),
+s('2-w2-3','All Shine Detailing','75 Delta Avenue','Satyan','0225163481','','S',4),
+s('2-w2-4','Panel Touch','11 Bentinck Rd','Raj (owner)','','','S',4),
+s('2-w2-5','Binstead Automotive','2/1 Binstead Rd','Imran','','Brake clean, Tshine etc','S',4),
+s('2-w2-6','North West Toyota','5 Delta Ave','Daniel / Liam','','','S',4),
+s('2-w2-7','Magic Touch Car Grooming','3025 Great North Rd','Bill','','','S',4),
+s('2-w2-8','AutoCorner','3019 Great North Rd','Nalin','','','S',4),
+s('2-w2-9','13 Autos','3015 Great North Rd','Jagdeep','','','S',4),
+s('2-w2-10','DTR Motors','12 Ward St','Toni & Johnston','','Buying','',4),
+s('2-w2-11','Aroha Motors','8 Puriri St','Sagar','','','',4),
+s('2-w2-12','Davey NZ','44c Portage Rd','Glen / Harry','','Glen panel shop, Harry detailing','',4),
+s('2-w2-13','ABC Motors','1 Cunard Street','Kay','022 163 1879','','',4),
+s('2-w2-14','HM Motors','New Lynn','Mike','','Buying','S',4),
+s('2-w2-15','Precision Automotive','New Lynn','Faraz','','Buying little bit','',4),
+]},
+'W2-Thu':{area:'Onehunga',stops:[
+s('2-th2-1','2 Cheap Cars','Onehunga','Kento','','','',4),
+s('2-th2-2','Gast Automotive','Onehunga','Gareth','','','S',4),
+s('2-th2-3','Lift Trucks','Onehunga','Ash','','','S',4),
+s('2-th2-4','NZ Crane Hire','Onehunga','Cam','','','S',4),
+s('2-th2-5','Clean Co','Onehunga','David','','','S',4),
+s('2-th2-6','Total Access','Onehunga','Troy / Mark','','Mark is person to speak to','',4),
+s('2-th2-7','Pearce Brothers','Onehunga','Carol / Zac','','Zac is groomer','S',4),
+s('2-th2-8','Tom Ryan Trucks','Onehunga','Prab','','','',4),
+s('2-th2-9','G & T Auto','Onehunga','Nishantha','','','',4),
+s('2-th2-10','13 Autos','Onehunga','Jagdeep','','','S',4),
+s('2-th2-11','Wright Panel & Paint','Onehunga','John','','','S',4),
+s('2-th2-12','Auckland Radiator','Onehunga','Lee','','','S',4),
+s('2-th2-13','Evoke Body Works','Onehunga','Aaron','021666880','','S',4),
+s('2-th2-14','John Edwards Motors','Onehunga','Roger','','','S',4),
+s('2-th2-15','Hire Pool','Onehunga','Anthony','','Account in process','',4),
+s('2-th2-16','AFH','Onehunga','Nicolas','','Sent Dave account form','',4),
+s('2-th2-17','Planet Cars','Onehunga','John / Norm','','','',4),
+]},
+'W2-Fri':{area:'West Cold Call',stops:[]},
+'W3-Mon':{area:'Penrose',stops:[
+s('2-m3-1','TR Group Ltd','781 Great South Road','Alex','','Armourglow / Fleetwash trial and Gantry Wash XT88','S',4),
+s('2-m3-2','Oracle Autos Penrose','721 Great South Road','Martin','','','S',4),
+s('2-m3-3','Rusteze Auto Spa','Oracle\'s Yard','Gayan','0226735989','Call if not present','',4),
+s('2-m3-4','Corporate Cars','18 Industry Rd','Corey','0272035701','Call ahead','',4),
+s('2-m3-5','AJ Motors / Ceaser Cars','444 Church Street','Jay & James / Yuen','','Yuen does grooming','S',4),
+s('2-m3-6','Vision Auto Sales','89 Station Rd','John / Leon / Rish','','Leon looks after grooming, Rish yard manager','S',4),
+s('2-m3-7','LW Bonney Trucking','882 Great South Rd','John / Mike','','John workshop mgr, Mike owner','S',4),
+s('2-m3-8','Jayco Auckland','960 Great South Road','Mitch / Liam','','','S',4),
+s('2-m3-9','Greenway Demolition','3 Basant Avenue','Lance','','','S',4),
+s('2-m3-10','HMS Forklifts','4 Basant Ave','','','Prospect','',4),
+s('2-m3-11','Manikaran Autos','505 Great South Rd','Jasbir','','','',4),
+s('2-m3-12','City Motor Group','742 Great South Road','Allan','','','',4),
+s('2-m3-13','TDM','Penrose','Ray','027 547 8114','Parts manager','',4),
+s('2-m3-14','Dalton Electrical','Penrose','Raj & Charlie','','Charlie does ordering','',4),
+s('2-m3-15','Orix','Penrose','Simone','','','',4),
+s('2-m3-16','Toyota Greenlane','Greenlane','Ricky','','Wash bay','',4),
+s('2-m3-17','Newdane Motors','Greenlane','Michael / Ben','','','',4),
+s('2-m3-18','Carfe','Greenlane','Boston','','','',4),
+s('2-m3-19','Trade Post','Greenlane','Stewart','','','',4),
+]},
+'W3-Tue':{area:'Mt Wellington / Greenlane',stops:[
+s('2-t3-1','NZ Cheap Cars','500 Ellerslie Panmure Hwy','Pardeep','','Detailing Doctor — contracts to yard','S',4),
+s('2-t3-2','OKAY Motors','516 Ellerslie Panmure Hwy','Trent / Ken','','','S',4),
+s('2-t3-3','Auckland City Toyota','8 Forge Way','Daniel','','','S',4),
+s('2-t3-4','Chamz Cars Limited','11 Forge Way','Neil','','','S',4),
+s('2-t3-5','Fasst Used','4/6 Mountwell Crescent','Van (groomer)','','','S',4),
+s('2-t3-6','Metro Hire','1 Morrin Rd','Gavin','','','S',4),
+s('2-t3-7','The Gloss Detailing','80 Morrin Rd','Jack','027 520 5566','Stay on top of account','',4),
+s('2-t3-8','Wilkinson Trading','535 Ellerslie Panmure Hwy','Blair','','Reconnect / call ahead','',4),
+s('2-t3-9','Scarbro Civil','5 Hannigan Dr','Paul','','','',4),
+s('2-t3-10','Dr Diesel','36b Hannigan Dr','Stu / Peter / Cam','','Cam is owner','',4),
+s('2-t3-11','Marine Detailing','Tamaki Marine Park','Harry','','Call ahead','S',4),
+s('2-t3-12','Robur Hire','34 Gabador Pl','Grant','','','S',4),
+s('2-t3-13','Just Trucks','809 Great South Road','Karen','','','S',4),
+s('2-t3-14','The Coating Lab','Mt Wellington','Ryan','','Gave samples','Q',4),
+s('2-t3-15','The PPF','Mt Wellington','Brian','','','S',4),
+s('2-t3-16','Harley Davidson','Mt Wellington','Ray & Greg','','Owners','',4),
+]},
+'W3-Wed':{area:'Newmarket / Grey Lynn',stops:[
+s('2-w3-1','Polstar','Newmarket','Cain','02102774534','Small user','S',4),
+s('2-w3-2','B&B Auto Detailing','Upstairs at Nissan','Bhadreek / Bhavik','0220729376','','S',4),
+s('2-w3-3','GillTrap MG','82 Great South Rd','Laura / Chrissy / Sergio','','Laura sales mgr, Sergio groomer','S',4),
+s('2-w3-4','Continental VW','Newmarket','Brad Millen','','Service manager','Q',4),
+s('2-w3-5','Continental Porsche','Newmarket','Colin','0210524303','','S',4),
+s('2-w3-6','Continental Audi','Newmarket','Scott Windelburn','','Sales mgr','',4),
+s('2-w3-7','Lexus','Newmarket','Graeme / Carl','','Positive','',4),
+s('2-w3-8','BMW','Newmarket','Vishal Patel','021776069','Also looks after used and Mini','',4),
+s('2-w3-9','ATG Autocare','407 Broadway','Allan / Daniel','','Daniel orders','',4),
+s('2-w3-10','Mercedes','Newmarket','Kassi / Nick Taylor','','Nick is service mgr','',4),
+s('2-w3-11','Rubber Dub','131 Manukau Rd Epsom','Ramon','','All barrels, all pacer','Q',4),
+s('2-w3-12','Jordan Panel','364 Great North Rd','Tim','','','',4),
+s('2-w3-13','Auckland City Toyota','101 Great North Rd','Johnny / Richard','','Johnny detailing mgr','',4),
+s('2-w3-14','Giltrap Audi','Grey Lynn','Michael','','Workshop controller — gave pricing on brake cleaner','',4),
+s('2-w3-15','Giltrap Porsche/VW','Grey Lynn','','','Acc open — starting to purchase','',4),
+s('2-w3-16','Giltrap Prestige','Grey Lynn','Devon','','Service manager','',4),
+s('2-w3-17','CBD Panel','Grey Lynn','Tyron','','Account open','',4),
+s('2-w3-18','Top Motors','Grey Lynn','Nayeem','','','S',4),
+]},
+'W3-Thu':{area:'North Shore',stops:[
+s('2-th3-1','Caprice Valet','North Shore','Raj','','','S',4),
+s('2-th3-2','Winger Sale','North Shore','Charlie & Andrew','','','',4),
+s('2-th3-3','Continental BMW','North Shore','Graham','','','',4),
+s('2-th3-4','BMW Motorad','North Shore','Steve','','','',4),
+s('2-th3-5','Cycle Spot','North Shore','Zac','','','',4),
+s('2-th3-6','Archibald & Shorter','North Shore','Aaron / Stone','','Stone groomer','',4),
+s('2-th3-7','Winger Service','North Shore','Vicus','','','',4),
+s('2-th3-8','JB Panel & Paint','North Shore','Blaze','','','',4),
+s('2-th3-9','Engine Specialists','North Shore','Glen / Andrew','','Glen owner, Andrew manager','',4),
+s('2-th3-10','Precision Auto Works','North Shore','Kelvin','','','',4),
+s('2-th3-11','Giltrap Audi','North Shore','Aaron','','','',4),
+s('2-th3-12','Giltrap North Shore','North Shore','Tony','','','',4),
+s('2-th3-13','Simon Lucas Mitsubishi','North Shore','Allan / Steve','','Allan grooming, Steve service mgr','S',4),
+s('2-th3-14','NST','North Shore','Jason / Victor','','Victor contract grooming','',4),
+s('2-th3-15','Ingham Nissan','North Shore','Ron','','','',4),
+s('2-th3-16','Renew Car','North Shore','Steve','','Buying','S',4),
+s('2-th3-17','Midas','North Shore','Eric','','','',4),
+s('2-th3-18','Pacific Cars','North Shore','Sam','','Sent pricing','',4),
+]},
+'W3-Fri':{area:'Albany',stops:[
+s('2-f3-1','Final Touch','Albany','Gordon & Harrison','','','',4),
+s('2-f3-2','Line Painting','Albany','Sam','','Gave sample of graffiti elim','',4),
+s('2-f3-3','Colour Sharp','Albany','Cara & Jason','','','',4),
+s('2-f3-4','Bellars Motor Works','Albany','Ken','','','',4),
+s('2-f3-5','Albany Toyota','Albany','Grant','','','',4),
+s('2-f3-6','Firth Cement','Albany','Jordan','','','',4),
+s('2-f3-7','AB Equipment','Albany','Rigan','','','',4),
+s('2-f3-8','Porter Hire','Albany','CJ','','','',4),
+s('2-f3-9','Albany Car Valet','Albany','Bin','','','',4),
+s('2-f3-10','Ridge Road Quarry','Albany','Dean','','','',4),
+s('2-f3-11','Elite Motors','Albany','Forrest / Elliot / Hank','','','',4),
+s('2-f3-12','Cook Euro','Albany','Andrew','','','',4),
+s('2-f3-13','Manons Motors','Albany','Crystal','','','',4),
+s('2-f3-14','LDV','Albany','Pam','','','',4),
+s('2-f3-15','Sign Writing','Albany','Ryan','','','',4),
+s('2-f3-16','Stroud','Albany','Jason & Sean','','','',4),
+s('2-f3-17','Euro Motorhomes','Albany','Kelly','','','',4),
+s('2-f3-18','Podium Concrete','Albany','Jacob','','Buying','',4),
+s('2-f3-19','Takapuna Car Valet','Takapuna','Paul','','','',4),
+s('2-f3-20','Takapuna Motor Group','Takapuna','James / Lez','','Lez groomer','',4),
+s('2-f3-21','The Wrap Shop','Takapuna','Hayden / David','','','',4),
+]},
+'W4-Mon':{area:'Avondale / Mt Roskill',stops:[
+s('2-m4-1','Vuksich & Borich','45/51 Fremlin Place','Murray','027 494 9087','Make appt','',4),
+s('2-m4-2','Tongue Performance','Avondale','JP','','','',4),
+s('2-m4-3','Euro Sparx','Avondale','Kiro','','','',4),
+s('2-m4-4','Kaar Services & Repair','Avondale','Blair','','','',4),
+s('2-m4-5','Rock & Rumble','747 Rosebank Road','Mark','021686533','','',4),
+s('2-m4-6','Rock Shop Quarry Products','557 Rosebank Road','','','','',4),
+s('2-m4-7','Jeez Motors','303a Rosebank Road','AJ & Nigel','','','',4),
+s('2-m4-8','Signet Motors','4135 Great North Road','Niles / Kinil','021 269 1085','','',4),
+s('2-m4-9','Auckland Best 4x4','6e Cartwright Road','Robulla','','','',4),
+s('2-m4-10','Motor King','8 Cartwright Road','Hoon','','','',4),
+s('2-m4-11','Legendary Motors','32 Cartwright Road','Jade & Carl','','','S',4),
+s('2-m4-12','Greenwise Cars','34 Cartwright Road','Nick & Tom','021 167 7405','','',4),
+s('2-m4-13','Bold Signage','Avondale','Greg','','','S',4),
+s('2-m4-14','Glen Eden Auto','Glen Eden','Rhonda & Bruce','','4 weekly','S',4),
+s('2-m4-15','Rubbish Direct','Avondale','Weasley','','','',4),
+s('2-m4-16','We Care Auto Repair','234 Richardson Road','Nawaz','','Ref by Faraz at Esteem Motors','',4),
+s('2-m4-17','Mr Motors','Mt Roskill','Jilly','','','',4),
+s('2-m4-18','Kiwi Cheap Cars','Mt Roskill','Roy','','','',4),
+s('2-m4-19','Aroha Motors','Mt Roskill','Ahpi','','','',4),
+]},
+'W4-Tue':{area:'Henderson',stops:[
+s('2-t4-1','North West Toyota','282 Lincoln Road','Merissa / Jack','','','',4),
+s('2-t4-2','Jan Japan','320 Lincoln Rd','Shahzaib','','','S',4),
+s('2-t4-3','Novino Motors','360 West Coast Road','','0225361363','Call first','S',4),
+s('2-t4-4','Croydons','Henderson','Glen','027 571 6505','','',4),
+s('2-t4-5','John Andrew Ford','Henderson','Rob (Service Mgr)','','','',4),
+s('2-t4-6','West City Auto Group','Henderson','Rick & Sam / Mike','','Mike service manager','',4),
+s('2-t4-7','LDV','126 Central Park Drive','Morne','027 335 3897','','',4),
+s('2-t4-8','Sithari Cars','24 Bruce McLaren Road','Param','027 314 1991','','',4),
+s('2-t4-9','Precision Autos','23 Bruce McLaren Road','Ali & Roman','021 982 992','','',4),
+s('2-t4-10','RPM','16 Heremai Street','Emir','021 027 08215','','',4),
+s('2-t4-11','Railside Auto Centre','Henderson','Nasir','','','',4),
+s('2-t4-12','The Car Warehouse','Henderson','Mark / Jimmy','','Jimmy groomer','',4),
+s('2-t4-13','Winger Motors','Henderson','Sam / Anthony','','Anthony groomer','',4),
+s('2-t4-14','Wheels Online','Henderson','Phillip / Raymond','','','',4),
+s('2-t4-15','Fleet Specialist','Henderson','Kevin','','','',4),
+]},
+'W4-Wed':{area:'New Lynn',stops:[
+s('2-w4-1','NZ Motors','5 Stock Street','Aggi / Abjit','','Aggi groomer downstairs','S',4),
+s('2-w4-2','Stock Street Autos','1/6 Stock Street','MJ & Jordan','','','',4),
+s('2-w4-3','All Shine Detailing','75 Delta Avenue','Satyan','0225163481','','S',4),
+s('2-w4-4','Panel Touch','11 Bentinck Rd','Raj (owner)','','','S',4),
+s('2-w4-5','Binstead Automotive','2/1 Binstead Rd','Imran','','Brake clean, Tshine etc','S',4),
+s('2-w4-6','North West Toyota','5 Delta Ave','Daniel / Liam','','','S',4),
+s('2-w4-7','Magic Touch Car Grooming','3025 Great North Rd','Bill','','','S',4),
+s('2-w4-8','AutoCorner','3019 Great North Rd','Nalin','','','S',4),
+s('2-w4-9','13 Autos','3015 Great North Rd','Jagdeep','','','S',4),
+s('2-w4-10','DTR Motors','12 Ward St','Toni & Johnston','','Buying','',4),
+s('2-w4-11','Aroha Motors','8 Puriri St','Sagar','','','',4),
+s('2-w4-12','Davey NZ','44c Portage Rd','Glen / Harry','','Glen panel shop, Harry detailing','',4),
+s('2-w4-13','ABC Motors','1 Cunard Street','Kay','022 163 1879','','',4),
+s('2-w4-14','HM Motors','New Lynn','Mike','','Buying','S',4),
+]},
+'W4-Thu':{area:'Onehunga',stops:[
+s('2-th4-1','2 Cheap Cars','Onehunga','Kento','','','',4),
+s('2-th4-2','Gast Automotive','Onehunga','Gareth','','','S',4),
+s('2-th4-3','Lift Trucks','Onehunga','Ash','','','S',4),
+s('2-th4-4','NZ Crane Hire','Onehunga','Cam','','','S',4),
+s('2-th4-5','Clean Co','Onehunga','David','','','S',4),
+s('2-th4-6','Total Access','Onehunga','Troy / Mark','','Mark is person to speak to','',4),
+s('2-th4-7','Pearce Brothers','Onehunga','Carol / Zac','','Zac groomer','S',4),
+s('2-th4-8','Tom Ryan Trucks','Onehunga','Prab','','','',4),
+s('2-th4-9','Wright Panel & Paint','Onehunga','John','','','S',4),
+s('2-th4-10','Auckland Radiator','Onehunga','Lee','','','S',4),
+s('2-th4-11','Evoke Body Works','Onehunga','Aaron','021666880','','S',4),
+s('2-th4-12','John Edwards Motors','Onehunga','Roger','','','S',4),
+s('2-th4-13','Hire Pool','Onehunga','Anthony','','Account in process','',4),
+s('2-th4-14','AFH','Onehunga','Nicolas','','Sent Dave account form','',4),
+s('2-th4-15','Planet Cars','Onehunga','John / Norm','','','',4),
+]},
+'W4-Fri':{area:'West Cold Call',stops:[]},
+},
+
+Ham:{
+'W1-Mon':{area:'Te Rapa Left',stops:[
+s('h-m1-1','Woodbine Marine','Te Rapa','Chad & Cyliss','','','',4),
+s('h-m1-2','Central Group','Te Rapa','Daniel Picard','','Abdul service tech — try get number','',4),
+s('h-m1-3','Hamilton Panel and Paint','Te Rapa','Ravinda','','','',4),
+s('h-m1-4','TRT — Tidd Ross Todd','Te Rapa','Kevin / Jason','','Kevin paint, Jason workshop','',4),
+s('h-m1-5','Final Touch Hamilton','Te Rapa','Adam','','','',4),
+s('h-m1-6','Action Manufacturing','Te Rapa','Ronnie','','','',4),
+s('h-m1-7','Transport Trailers','Te Rapa','Joel (purchasing)','','','',4),
+s('h-m1-8','JJ Richards Hamilton','Te Rapa','Ryan Webb / Sienna','','Follow up Satin Black demo','S',4),
+s('h-m1-9','Cable Price','Te Rapa','John / Callum','','John parts mgr, Callum manager — Stephan leading hand','',4),
+s('h-m1-10','K and L Distributors','Te Rapa','Jarrod / George','','','',4),
+s('h-m1-11','Terra CAT','Te Rapa','Nick / Nathan','','Nathan in office — tested and like products','',4),
+s('h-m1-12','Waikato Ssang Yong LDV','Te Rapa','Angelique','','Account open — has purchased','S',4),
+s('h-m1-13','Chalkys Autos','Te Rapa','Des','','Has purchased','S',4),
+s('h-m1-14','Auto Auctioneers','Te Rapa','Phil (owner) / Mason','','Mason detailer','',4),
+s('h-m1-15','Ingham Bottom Workshop','Te Rapa','Tony / Chris','','Brake cleaner, Trucksteam — Chris parts','',4),
+s('h-m1-16','Ingham Prestige Workshop','Te Rapa','Dan Long','','Same deal as Dwayne and more','',4),
+s('h-m1-17','Industry Motor Group','Te Rapa','Anthony','','','',4),
+s('h-m1-18','Project J Autos','Te Rapa','Raj / James','','Raj detailer, James owner','',4),
+s('h-m1-19','Ingham Used Cars','Te Rapa','Barry / Rick / Aiden','','Uses bits and pieces — win them over','',4),
+s('h-m1-20','Detailer — Lehi Kapoor','Te Rapa','Lehi Kapoor','','Small time mobile detailer — call to see if anything needed','',4),
+]},
+'W1-Tue':{area:'Te Rapa Right',stops:[
+s('h-t1-1','Prestige Collision Repair','Te Rapa','Jade / Jessie','','Jessie grooming bay','',4),
+s('h-t1-2','Harley Davidson','Te Rapa','Craig / Aiden','','Aiden groomer','',4),
+s('h-t1-3','Fairview Ford','Te Rapa','Harley / Nathan','','Harley groom mgr — tight with current supplier','',4),
+s('h-t1-4','National Tyres and Auto','Te Rapa','Anish (owner)','','','',4),
+s('h-t1-5','Coombs BMW','Te Rapa','Andrew / Reegan','','Andrew office, Reegan groomer','',4),
+s('h-t1-6','Jaels Car Grooming','Te Rapa','Jael (owner)','','Pays each visit','S',4),
+s('h-t1-7','Pit Stop','Te Rapa','Andrew (owner)','','Trucksteam / brake cleaner so far','',4),
+s('h-t1-8','Neat Glaze','Te Rapa','Hans Bahger (owner)','','Buys monthly — all our stuff','S',4),
+s('h-t1-9','Enviro Waste','Te Rapa','Grant','','Haven\'t got Grant across the line — line up trials','',4),
+s('h-t1-10','Wade Collision','Te Rapa','Amy / Geoff','','','',4),
+s('h-t1-11','Hamilton Asphalts','Te Rapa','Rob / Jasper','','Sent acc form — none back yet','',4),
+s('h-t1-12','Schick','Te Rapa','Bill','','Keen to try us — sent acc form, follow up','',4),
+s('h-t1-13','Downer','Te Rapa','Nigel','','Keen to try us — sent acc form, follow up','',4),
+s('h-t1-14','U Sell','Te Rapa','Adrian (owner)','','','',4),
+s('h-t1-15','The Base Carwash','Te Rapa','Simer Singh','','Hasn\'t purchased yet — arrange catch up and trials','',4),
+s('h-t1-16','AB Equipment','Te Rapa','Anthony','','','',4),
+s('h-t1-17','Cal Isuzu','Te Rapa','Adrianne Crowe','','She looks after grooming — see in March','',4),
+s('h-t1-18','TR Group Hamilton','Te Rapa','Matt / Josh / Brandon','','Josh likes our stuff, work on Brandon in refurb','',4),
+s('h-t1-19','Keith Andrews Hamilton','Te Rapa','Reegan / Sean','','Sean service mgr, Reegan orders grooming','',4),
+]},
+'W1-Wed':{area:'Over the Tracks',stops:[
+s('h-w1-1','Ebbett VW','Hamilton','Donovan / Ari / Mikey','','Donovan sales, Ari service, Mikey parts (brake cleaner)','',4),
+s('h-w1-2','Ebbett Volvo BYD','Hamilton','Jenny / Jordan','','Jenny grooming','',4),
+s('h-w1-3','Ebbett Toyota Workshop','Hamilton','Andrew','','Service manager','',4),
+s('h-w1-4','Ebbett Toyota Lexus','Hamilton','Jayden','','Grooming','',4),
+s('h-w1-5','Honda Hamilton','Hamilton','Hamish / Mitch','','Restart conversation — provide quote','',4),
+s('h-w1-6','Winger Suzi/Subaru','Hamilton','Chris Pettelier','','Restart conversation — provide quote','',4),
+s('h-w1-7','Waikato Kia','Hamilton','Gary / Marius','','Marius orders Armourglow — win over Gary more','',4),
+s('h-w1-8','Sinotruck','Hamilton','Amanda','','Started with Tiger — work on more','',4),
+s('h-w1-9','Auto Leisure','Hamilton','Fleur','','Spoke last year — interested for 2026, revisit','',4),
+s('h-w1-10','4 Guys','Hamilton','Tracey / Salina / Mike','','Tracey grooming, Salina ops, Mike workshop','',4),
+s('h-w1-11','Waikato Truckwash','Hamilton','Alan','','Buys our grooming products','S',4),
+s('h-w1-12','Buccaneer Boats','Hamilton','Wade','','Evo X and Mirror','',4),
+s('h-w1-13','Fleet Image','Hamilton','Chanelle','','Make appointment to show products properly','',4),
+s('h-w1-14','Bayonne Construction','Hamilton','Ian','','Prices provided — follow up Wk1 Feb','',4),
+]},
+'W1-Thu':{area:'Tauranga',stops:[]},
+'W1-Fri':{area:'Cold Call Build',stops:[]},
+'W2-Mon':{area:'Frankton',stops:[
+s('h-m2-1','Shine On Detail','Frankton','DJ (owner)','','Tried Evo X and Trim Ultra — not on board yet','',4),
+s('h-m2-2','Drive and Drive — Garage 64','Frankton','Vippin (owner)','','Never met — possible good customer','',4),
+s('h-m2-3','Diesel and Turbo','Frankton','Suraj / Ivan','','Uses us for grooming — get Ivan on products','S',4),
+s('h-m2-4','P and B Mechanical','Frankton','Michelle','','Gave Ultra Grit and Extra Hands samples','',4),
+s('h-m2-5','P and B Auto Electrical','Frankton','Andrew / Cory','','Interested in workshop consumables','',4),
+s('h-m2-6','MVP Cars','Frankton','Fia','','Fia contract grooms — call ahead','',4),
+s('h-m2-7','Waikato Cars','Frankton','Glen','','Buying — keep on, will eventually get on everything','S',4),
+s('h-m2-8','Auto Valet Ming Centre','Frankton','Eddie','','Buys most of our stuff — keep pmt 2 weeks max','S',4),
+s('h-m2-9','Auto Project','Frankton','Ryan','','','',4),
+s('h-m2-10','Overland Motor Homes','Frankton','Paul','','','',4),
+s('h-m2-11','Ratwash','Frankton','Drae','','','',4),
+]},
+'W2-Tue':{area:'Cambridge / Leamington',stops:[
+s('h-t2-1','Scania','Cambridge','Tabitha / Andrew','','Andrew manager — slowly getting all products in','S',4),
+s('h-t2-2','Brandt','Cambridge','Rob','','Quote for washbay/workshop consumables — follow up','Q',4),
+s('h-t2-3','C&R Civil Construction','Cambridge','Chris','','Said come back end of year as they get busier','',4),
+s('h-t2-4','Wrap Trade','Cambridge','Penelope / Sandy','','Have purchased — keep working on','S',4),
+s('h-t2-5','TCL Earthworks','Cambridge','Tony','0274107770','Haven\'t met yet — call ahead','',4),
+s('h-t2-6','CJ Mechanical','Cambridge','Nick','0221710973','Spoke about workshop items — follow up on quote','',4),
+s('h-t2-7','Cambridge Diesel','Cambridge','Sam','','Keen to give us a go — go back with pricing','Q',4),
+s('h-t2-8','Fieldline','Cambridge','Glenn','','Buying more and more','S',4),
+s('h-t2-9','Schultze','Cambridge','Damian','','Sent pricing — go back','',4),
+s('h-t2-10','Camex','Cambridge','Gene','','Seemed keen — go back','',4),
+s('h-t2-11','Shaws','Cambridge','Greg','','Met and discussed product and pricing','',4),
+s('h-t2-12','Inghams Leamington','Leamington','Chris / Gavin','','Gavin sales mgr — send prices and trial','',4),
+]},
+'W2-Wed':{area:'Morrinsville / Matamata',stops:[]},
+'W2-Thu':{area:'Cold Call Build',stops:[]},
+'W2-Fri':{area:'Cold Call Build',stops:[]},
+'W3-Mon':{area:'Te Rapa Left / Cold Call',stops:[
+s('h-m3-1','Excavator Imports','Te Rapa','Cam','','','',4),
+s('h-m3-2','Cable Price','Te Rapa','John / Callum','','John parts mgr, Callum manager','',4),
+s('h-m3-3','Ingham Bottom Workshop','Te Rapa','Tony / Chris','','Brake cleaner, Trucksteam','',4),
+s('h-m3-4','Ingham Prestige Workshop','Te Rapa','Dan Long','','Same deal as Dwayne and more','',4),
+]},
+'W3-Tue':{area:'Te Rapa Right',stops:[
+s('h-t3-1','Prestige Collision Repair','Te Rapa','Jade','','','',4),
+s('h-t3-2','Jaels Car Grooming','Te Rapa','Jael','','Pays each visit','S',4),
+s('h-t3-3','Coombs BMW','Te Rapa','Andrew / Reegan','','Andrew office, Reegan groomer','',4),
+]},
+'W3-Wed':{area:'Over the Tracks',stops:[
+s('h-w3-1','Ebbett VW','Hamilton','Kyle / Josh / Ari / Jarrod / Mikey','','Kyle & Josh grooming, Ari service mgr, Mikey parts','',4),
+s('h-w3-2','Ebbett Volvo BYD','Hamilton','David / Jenny / Jordan','','David office, Jenny & Jordan grooming','',4),
+s('h-w3-3','Ebbett Toyota Workshop','Hamilton','Andrew (workshop) / Jayden (groomer)','','','',4),
+s('h-w3-4','Ebbett Toyota Lexus','Hamilton','Jayden','','','',4),
+s('h-w3-5','Sinotruck','Hamilton','Amanda','','','',4),
+s('h-w3-6','4 Guys','Hamilton','Tracey / Salina / Mike','','Tracey grooming, Salina ops, Mike workshop','',4),
+]},
+'W3-Thu':{area:'Tauriko',stops:[]},
+'W3-Fri':{area:'Cold Call Build',stops:[]},
+'W4-Mon':{area:'Frankton',stops:[
+s('h-m4-1','Diesel and Turbo','Frankton','Suraj / Ivan','','','S',4),
+s('h-m4-2','Auto Valet Ming Centre','Commerce St, Frankton','Eddie','','Buys most of our stuff','S',4),
+s('h-m4-3','Ratwash','Frankton','Drae','','','',4),
+s('h-m4-4','Kinetic','Frankton','','','','',4),
+]},
+'W4-Tue':{area:'Cambridge',stops:[]},
+'W4-Wed':{area:'Rotorua',stops:[]},
+'W4-Thu':{area:'Cold Call Build',stops:[]},
+'W4-Fri':{area:'Cold Call Build',stops:[]},
+}
 };
 
 const STATE={};
-const MESSAGES=[
-  {from:'Ron',time:'8:42am',body:'Anyone been to Final Touch Albany lately? Thinking of pushing Armourglow.',isLead:false},
-  {from:'Rep 2',time:'9:15am',body:'Gloss Detailing Mt Wellington — Jack needs a full washbay quote. Good lead for whoever is closest.',isLead:true},
+const MSGS=[
+  {from:'Ron',time:'8:42am',body:'Anyone been to Final Touch Albany lately? Thinking of pushing Armourglow.',ld:false},
+  {from:'Rep 2',time:'9:15am',body:'Gloss Detailing Mt Wellington — Jack needs a full washbay quote. Good lead for whoever is closest.',ld:true},
 ];
 
-function isFree(rep,rk){const r=ROUTES[rep]&&ROUTES[rep][rk];if(!r)return true;return FREE_PATTERNS.some(p=>r.area.includes(p));}
-function getStops(){const r=ROUTES[curRep]&&ROUTES[curRep][curRouteKey];return r?r.stops:[];}
-function getArea(){const r=ROUTES[curRep]&&ROUTES[curRep][curRouteKey];return r?r.area:'';}
-function isOwnRep(){const v=document.getElementById('repSel').value;return!v||v===curRep;}
+function isFR(rp,rk){const r=ROUTES[rp]&&ROUTES[rp][rk];if(!r)return true;return FREE.some(p=>r.area.includes(p));}
+function gSt(){const r=ROUTES[CR]&&ROUTES[CR][CRK];return r?r.stops:[];}
+function gAr(){const r=ROUTES[CR]&&ROUTES[CR][CRK];return r?r.area:'';}
+function isOwn(){const v=document.getElementById('rsel').value;return!v||v===CR;}
 
-function initState(){getStops().forEach(s=>{if(!STATE[s.id])STATE[s.id]={o:null,note:'',val:'',time:null,nextNote:'',referral:'',flagged:false,cycle:s.cycle||4,contact:s.contact||'',phone:s.phone||'',email:s.email||''};});}
+function initS(){gSt().forEach(s=>{if(!STATE[s.id])STATE[s.id]={o:null,note:'',val:'',time:null,nn:'',ref:'',fl:false,cy:s.cycle||4,co:s.contact||'',ph:s.phone||'',em:s.email||''};});}
 
-function switchView(name){
+function sv(nm){
   ['run','lb','msg'].forEach(v=>{
-    document.getElementById('panel-'+v).className='view-panel'+(v===name?' active':'');
-    document.getElementById('vtab-'+v).className='vtab'+(v===name?' active':'');
+    document.getElementById('pn-'+v).className='vp'+(v===nm?' act':'');
+    document.getElementById('vt-'+v).className='vtb'+(v===nm?' act':'');
   });
-  if(name==='lb')renderLeaderboard();
-  if(name==='msg')renderMessages();
+  if(nm==='lb')rlb();if(nm==='msg')rmsg();
 }
 
-function shiftCycle(delta){viewCycle=Math.max(1,viewCycle+delta);buildRouteGrid();}
+function shiftC(d){VC=Math.max(1,VC+d);brgd();}
 
-function buildRouteGrid(){
-  const g=document.getElementById('routeGrid');g.innerHTML='';
-  const rep=document.getElementById('repSel').value||curRep;
-  document.getElementById('cycleBadge').innerHTML='Cycle <strong>'+viewCycle+'</strong>';
-  const cs=getDateForCell(viewCycle,0,0);const ce=getDateForCell(viewCycle,3,4);
-  document.getElementById('cycleNavLabel').textContent='Cycle '+viewCycle+'  ·  '+fmtShort(cs)+' – '+fmtShort(ce);
-  const c=document.createElement('div');c.className='rg-corner';g.appendChild(c);
-  DAYS.forEach(d=>{const h=document.createElement('div');h.className='rg-dh';h.textContent=d;g.appendChild(h);});
-  WEEKS.forEach((w,wi)=>{
-    const wl=document.createElement('div');wl.className='rg-wl';wl.textContent=w;g.appendChild(wl);
-    DAYS.forEach((d,di)=>{
-      const rk=w+'-'+d;
-      const rd=ROUTES[rep]&&ROUTES[rep][rk];
-      const area=rd?rd.area:'';
-      const free=isFree(rep,rk);
-      const cellDate=getDateForCell(viewCycle,wi,di);
-      const isToday=cellDate.getTime()===TODAY.getTime();
-      const isActive=rk===curRouteKey;
+function brgd(){
+  const g=document.getElementById('rg');g.innerHTML='';
+  const rp=document.getElementById('rsel').value||CR;
+  document.getElementById('cbdg').innerHTML='Cycle <strong>'+VC+'</strong>';
+  const cs=gdc(VC,0,0),ce=gdc(VC,3,4);
+  document.getElementById('cnl').textContent='Cycle '+VC+'  ·  '+fs(cs)+' – '+fs(ce);
+  const c=document.createElement('div');c.className='rgh';g.appendChild(c);
+  DYS.forEach(d=>{const h=document.createElement('div');h.className='rgh';h.textContent=d;g.appendChild(h);});
+  WKS.forEach((w,wi)=>{
+    const wl=document.createElement('div');wl.className='rgw';wl.textContent=w;g.appendChild(wl);
+    DYS.forEach((d,di)=>{
+      const rk=w+'-'+d;const rd=ROUTES[rp]&&ROUTES[rp][rk];const area=rd?rd.area:'';
+      const free=isFR(rp,rk);const cd=gdc(VC,wi,di);const isT=cd.getTime()===TODAY.getTime();const isA=rk===CRK;
       const btn=document.createElement('button');
-      btn.className='rg-btn'+(free?' free':'')+(isActive?' active':'')+(isToday&&!isActive?' today':'');
-      btn.innerHTML='<span>'+d+'</span><span class="rg-date">'+fmtShort(cellDate)+'</span><span class="rg-area">'+(free?(area||'Free'):area)+'</span>';
-      btn.onclick=()=>{curRouteKey=rk;expandId=null;initState();buildRouteGrid();renderAll();};
+      btn.className='rgb'+(free?' fr':'')+(isA?' act':'')+(isT&&!isA?' tod':'');
+      btn.innerHTML='<span>'+d+'</span><span class="rgd">'+fs(cd)+'</span><span class="rga">'+(free?(area||'Free'):area)+'</span>';
+      btn.onclick=()=>{CRK=rk;EX=null;initS();brgd();rall();};
       g.appendChild(btn);
     });
   });
 }
 
-function repChanged(){const r=document.getElementById('repSel').value;if(r){curRep=r;curRouteKey='W1-Mon';expandId=null;initState();}buildRouteGrid();renderAll();}
-function renderAll(){renderPrepBanner();renderROBanner();renderStops();updateKPIs();}
+function repCh(){const r=document.getElementById('rsel').value;if(r){CR=r;CRK='W1-Mon';EX=null;initS();}brgd();rall();}
+function rall(){rpb();rrob();rst();ukpi();}
 
-function renderPrepBanner(){
-  const items=[];getStops().forEach(s=>{const d=STATE[s.id];if(d&&d.nextNote&&d.nextNote.trim())items.push('<strong>'+s.a+':</strong> '+d.nextNote);});
-  document.getElementById('prepBanner').innerHTML=items.length?'<div class="prep-banner"><div class="prep-title">Prep reminders for today</div>'+items.map(i=>'• '+i).join('<br>')+'</div>':'';
+function rpb(){
+  const items=[];gSt().forEach(s=>{const d=STATE[s.id];if(d&&d.nn&&d.nn.trim())items.push('<strong>'+s.a+':</strong> '+d.nn);});
+  document.getElementById('prepb').innerHTML=items.length?'<div class="prepb"><div class="prept">Prep reminders for today</div>'+items.map(i=>'• '+i).join('<br>')+'</div>':'';
 }
 
-function renderROBanner(){
-  const mine=isOwnRep();
-  const addBtn=document.getElementById('addStopBtn');const eod=document.getElementById('eodSection');
-  const names={Ron:'Ron',Rep2:'Rep 2',Hamilton:'Hamilton Rep'};
-  document.getElementById('roBanner').innerHTML=mine?'':'<div class="ro-banner"><span>Viewing '+( names[curRep]||curRep )+'\'s route — read only.</span><button class="suggest-btn" onclick="switchView(\'msg\')">Suggest lead</button></div>';
-  if(addBtn)addBtn.style.display=mine?'block':'none';
-  if(eod)eod.style.display=mine?'block':'none';
+function rrob(){
+  const mine=isOwn();const asb=document.getElementById('asb');const eods=document.getElementById('eods');
+  const nm={Ron:'Ron',Rep2:'Rep 2',Ham:'Hamilton Rep'};
+  document.getElementById('rob').innerHTML=mine?'':'<div class="rob"><span>Viewing '+( nm[CR]||CR )+'\'s route — read only.</span><button class="slb" onclick="sv(\'msg\')">Suggest lead</button></div>';
+  if(asb)asb.style.display=mine?'block':'none';
+  if(eods)eods.style.display=mine?'block':'none';
 }
 
-function renderStops(){
-  const list=document.getElementById('stopList');list.innerHTML='';
-  const mine=isOwnRep();const stops=getStops();
-  if(!stops.length){list.innerHTML='<div class="empty-day">'+(isFree(curRep,curRouteKey)?'Free day — add stops below':'No stops loaded for this route yet')+'</div>';return;}
+function rst(){
+  const list=document.getElementById('sl');list.innerHTML='';
+  const mine=isOwn();const stops=gSt();
+  if(!stops.length){list.innerHTML='<div class="emp">'+(isFR(CR,CRK)?'Free day — add stops below':'No stops loaded for this route yet')+'</div>';return;}
   stops.forEach((s,idx)=>{
-    const d=STATE[s.id]||{};
-    const vis=d.o&&d.o!=='skip';const ski=d.o==='skip';const op=expandId===s.id;
-    let pb='';if(s.pre&&s.pre.includes('S'))pb+='<span class="badge bc">Customer</span>';if(s.pre&&s.pre.includes('Q'))pb+='<span class="badge bq">Quoted</span>';
-    const cyc=d.cycle||s.cycle||4;if(cyc>4)pb+='<span class="badge bcyc">'+cyc+'w</span>';
+    const d=STATE[s.id]||{};const vis=d.o&&d.o!=='skip';const ski=d.o==='skip';const op=EX===s.id;
+    let pb='';if(s.pre.includes('S'))pb+='<span class="bg bgc">Customer</span>';if(s.pre.includes('Q'))pb+='<span class="bg bgq">Quoted</span>';
+    const cy=d.cy||s.cycle||4;if(cy>4)pb+='<span class="bg bgcy">'+cy+'w</span>';
     let ob='';
-    if(d.o==='sold')ob='<span class="badge bsold">Sold</span>';
-    else if(d.o==='quoted')ob='<span class="badge bq">Quoted</span>';
-    else if(d.o==='demo')ob='<span class="badge" style="background:var(--amber-lt);color:#854F0B">Demo</span>';
-    else if(d.o==='trial')ob='<span class="badge" style="background:var(--purple-lt);color:var(--purple)">Trial</span>';
-    else if(d.o==='noans')ob='<span class="badge bna">No ans</span>';
-    else if(d.o==='skip')ob='<span class="badge bskip">Skipped</span>';
-    if(d.flagged)ob+='<span class="badge bfl">Flagged</span>';
-    const ts=d.time?'<div class="stime">arrived '+d.time+'</div>':'';
-    const ph=d.phone||s.phone||'';const em=d.email||s.email||'';const co=d.contact||s.contact||'';
+    if(d.o==='sold')ob='<span class="bg bgs">Sold</span>';
+    else if(d.o==='quoted')ob='<span class="bg bgq">Quoted</span>';
+    else if(d.o==='demo')ob='<span class="bg" style="background:var(--al);color:#854F0B">Demo</span>';
+    else if(d.o==='trial')ob='<span class="bg" style="background:var(--pl);color:var(--p)">Trial</span>';
+    else if(d.o==='noans')ob='<span class="bg bgn">No ans</span>';
+    else if(d.o==='skip')ob='<span class="bg bgsk">Skipped</span>';
+    if(d.fl)ob+='<span class="bg bgfl">Flagged</span>';
+    const ts=d.time?'<div class="stm">arrived '+d.time+'</div>':'';
+    const ph=d.ph||s.phone||'';const em=d.em||s.email||'';const co=d.co||s.contact||'';
     const card=document.createElement('div');
-    card.className='sc'+(vis?' done':ski?' skipped':'')+(d.flagged?' flagged':'');
+    card.className='sc'+(vis?' dn':ski?' sk':'')+(d.fl?' fl':'');
     if(mine){
       card.draggable=true;
-      card.addEventListener('dragstart',e=>{dragSrc=idx;card.style.opacity='.4';e.dataTransfer.effectAllowed='move';});
+      card.addEventListener('dragstart',e=>{DS=idx;card.style.opacity='.4';e.dataTransfer.effectAllowed='move';});
       card.addEventListener('dragend',()=>{card.style.opacity='1';});
       card.addEventListener('dragover',e=>e.preventDefault());
-      card.addEventListener('drop',e=>{e.preventDefault();if(dragSrc===null||dragSrc===idx)return;const arr=ROUTES[curRep][curRouteKey].stops;const mv=arr.splice(dragSrc,1)[0];arr.splice(idx,0,mv);dragSrc=null;renderStops();updateKPIs();});
+      card.addEventListener('drop',e=>{e.preventDefault();if(DS===null||DS===idx)return;const arr=ROUTES[CR][CRK].stops;const mv=arr.splice(DS,1)[0];arr.splice(idx,0,mv);DS=null;rst();ukpi();});
     }
-    const editContent=`
+    const ec=`
       <div class="cg">
-        <div class="cf"><div class="flbl">Contact</div><input type="text" value="${co}" placeholder="Decision maker" onchange="uf('${s.id}','contact',this.value)"></div>
-        <div class="cf"><div class="flbl">Phone</div><input type="tel" value="${ph}" placeholder="+64 21..." onchange="uf('${s.id}','phone',this.value)"></div>
-        <div class="cf"><div class="flbl">Email</div><input type="email" value="${em}" placeholder="email@co.nz" onchange="uf('${s.id}','email',this.value)"></div>
-        <div class="cf"><div class="flbl">Cin7 ID</div><input type="text" placeholder="CIN-XXX" style="opacity:.6"></div>
+        <div class="cf"><div class="flb">Contact</div><input type="text" value="${co}" placeholder="Decision maker" onchange="uf('${s.id}','co',this.value)"></div>
+        <div class="cf"><div class="flb">Phone</div><input type="tel" value="${ph}" placeholder="+64 21..." onchange="uf('${s.id}','ph',this.value)"></div>
+        <div class="cf"><div class="flb">Email</div><input type="email" value="${em}" placeholder="email@co.nz" onchange="uf('${s.id}','em',this.value)"></div>
+        <div class="cf"><div class="flb">Cin7 ID</div><input type="text" placeholder="CIN-XXX" style="opacity:.6"></div>
       </div>
-      ${(ph||em)?'<div class="cl">'+(ph?'<a class="clink ph" href="tel:'+ph+'">Call '+(co||ph)+'</a>':'')+(em?'<a class="clink em" href="mailto:'+em+'">Email</a>':'')+'</div>':''}
-      <div class="cy-row"><span>Visit cycle:</span>
-        <select class="cy-sel" onchange="uf('${s.id}','cycle',parseInt(this.value))">
-          <option value="1"${cyc===1?' selected':''}>Weekly</option>
-          <option value="2"${cyc===2?' selected':''}>Fortnightly</option>
-          <option value="4"${cyc===4?' selected':''}>4 weekly</option>
-          <option value="6"${cyc===6?' selected':''}>6 weekly</option>
-          <option value="8"${cyc===8?' selected':''}>8 weekly</option>
-          <option value="12"${cyc===12?' selected':''}>12 weekly</option>
+      ${(ph||em)?'<div class="cl">'+(ph?'<a class="clk ph" href="tel:'+ph+'">Call '+(co||ph)+'</a>':'')+(em?'<a class="clk em" href="mailto:'+em+'">Email</a>':'')+'</div>':''}
+      <div class="cyr"><span>Visit cycle:</span>
+        <select class="cys" onchange="uf('${s.id}','cy',parseInt(this.value))">
+          <option value="1"${cy===1?' selected':''}>Weekly</option>
+          <option value="2"${cy===2?' selected':''}>Fortnightly</option>
+          <option value="4"${cy===4?' selected':''}>4 weekly</option>
+          <option value="6"${cy===6?' selected':''}>6 weekly</option>
+          <option value="8"${cy===8?' selected':''}>8 weekly</option>
+          <option value="12"${cy===12?' selected':''}>12 weekly</option>
         </select>
       </div>
-      ${s.n?'<div class="bg-note">'+s.n+'</div>':''}
-      <div class="orow">
+      ${s.n?'<div class="bgnote">'+s.n+'</div>':''}
+      <div class="or">
         <button class="ob${d.o==='sold'?' as':''}" onclick="so('${s.id}','sold')">Sold</button>
         <button class="ob${d.o==='quoted'?' aq':''}" onclick="so('${s.id}','quoted')">Quoted</button>
         <button class="ob${d.o==='demo'?' ad':''}" onclick="so('${s.id}','demo')">Demo</button>
         <button class="ob${d.o==='trial'?' at':''}" onclick="so('${s.id}','trial')">Trial</button>
         <button class="ob${d.o==='noans'?' an':''}" onclick="so('${s.id}','noans')">No answer</button>
-        <button class="ob${d.o==='skip'?' aski':''}" onclick="so('${s.id}','skip')">Skip</button>
+        <button class="ob${d.o==='skip'?' ask':''}" onclick="so('${s.id}','skip')">Skip</button>
       </div>
       <div class="ng">
-        <div><div class="flbl" style="margin-bottom:4px">Today's notes</div><textarea placeholder="Who you spoke to, what happened..." onchange="uf('${s.id}','note',this.value)">${d.note||''}</textarea></div>
-        <div><div class="flbl" style="margin-bottom:4px">Next visit reminder</div><textarea placeholder="Load 200L barrel, bring sample X..." onchange="uf('${s.id}','nextNote',this.value)">${d.nextNote||''}</textarea></div>
+        <div><div class="flb" style="margin-bottom:4px">Today's notes</div><textarea placeholder="Who you spoke to, what happened..." onchange="uf('${s.id}','note',this.value)">${d.note||''}</textarea></div>
+        <div><div class="flb" style="margin-bottom:4px">Next visit reminder</div><textarea placeholder="Load 200L barrel, bring sample X..." onchange="uf('${s.id}','nn',this.value)">${d.nn||''}</textarea></div>
       </div>
-      <div class="ref-box"><div class="ref-title"><div class="ref-dot"></div>Ask for referral</div><textarea placeholder="Referral name, business, contact..." onchange="uf('${s.id}','referral',this.value)">${d.referral||''}</textarea></div>
+      <div class="refb"><div class="reft"><div class="refd"></div>Ask for referral</div><textarea placeholder="Referral name, business, contact..." onchange="uf('${s.id}','ref',this.value)">${d.ref||''}</textarea></div>
       <div class="ar">
-        <div><div class="flbl" style="margin-bottom:4px">Order $</div><input class="oi" type="number" min="0" placeholder="0" value="${d.val||''}" onchange="uf('${s.id}','val',this.value);updateKPIs()"></div>
-        <button class="abtn${d.time?' done':''}" onclick="arr('${s.id}')">${d.time?'✓ Arrived':'Tap on arrive'}</button>
-        <button class="fbtn${d.flagged?' active':''}" onclick="flg('${s.id}')">${d.flagged?'Flagged':'Flag manager'}</button>
+        <div><div class="flb" style="margin-bottom:4px">Order $</div><input class="oi" type="number" min="0" placeholder="0" value="${d.val||''}" onchange="uf('${s.id}','val',this.value);ukpi()"></div>
+        <button class="ab${d.time?' dn':''}" onclick="arr('${s.id}')">${d.time?'✓ Arrived':'Tap on arrive'}</button>
+        <button class="fb${d.fl?' act':''}" onclick="flg('${s.id}')">${d.fl?'Flagged':'Flag manager'}</button>
       </div>`;
-    const readContent='<div style="padding:.2rem 0;font-size:13px;color:var(--text2)">'+(s.n||'No notes')+'</div>'+(ph||em?'<div class="cl" style="margin-top:.5rem">'+(ph?'<a class="clink ph" href="tel:'+ph+'">Call '+(co||ph)+'</a>':'')+(em?'<a class="clink em" href="mailto:'+em+'">Email</a>':'')+'</div>':'')+'<div style="margin-top:.5rem;font-size:12px;color:var(--text3)">Read only</div>';
-    card.innerHTML='<div class="sh" onclick="tog(\''+s.id+'\')"><span class="dh">⋮⋮</span><div class="snum'+(vis?' done':d.flagged?' fl':'')+'">'+(vis?'✓':d.flagged?'!':idx+1)+'</div><div class="si"><div class="sname">'+s.a+'</div><div class="saddr">'+(s.addr||'')+'</div>'+ts+'</div><div class="sbdg">'+pb+ob+'</div><div class="chev'+(op?' open':'')+'">▶</div></div><div class="sdet'+(op?' open':'')+'">'+( mine?editContent:readContent )+'</div>';
+    const rc='<div style="padding:.2rem 0;font-size:13px;color:var(--t2)">'+(s.n||'No notes')+'</div>'+(ph||em?'<div class="cl" style="margin-top:.5rem">'+(ph?'<a class="clk ph" href="tel:'+ph+'">Call '+(co||ph)+'</a>':'')+(em?'<a class="clk em" href="mailto:'+em+'">Email</a>':'')+'</div>':'')+'<div style="margin-top:.5rem;font-size:12px;color:var(--t3)">Read only</div>';
+    card.innerHTML='<div class="sh" onclick="tog(\''+s.id+'\')"><span class="dh">⋮⋮</span><div class="sn'+(vis?' dn':d.fl?' fl':'')+'">'+(vis?'✓':d.fl?'!':idx+1)+'</div><div class="si"><div class="snm">'+s.a+'</div><div class="sad">'+(s.addr||'')+'</div>'+ts+'</div><div class="sbg">'+pb+ob+'</div><div class="chv'+(op?' op':'')+'">▶</div></div><div class="sdt'+(op?' op':'')+'">'+( mine?ec:rc )+'</div>';
     list.appendChild(card);
   });
 }
 
-function tog(id){expandId=expandId===id?null:id;renderStops();}
-function so(id,o){if(!STATE[id])STATE[id]={};STATE[id].o=o;if(!STATE[id].time)STATE[id].time=new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});renderStops();updateKPIs();toast(o==='sold'?'Sale logged':o==='demo'?'Demo logged':'Logged');}
-function arr(id){if(!STATE[id])STATE[id]={};STATE[id].time=new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});renderStops();toast('Arrival stamped');}
-function uf(id,f,v){if(!STATE[id])STATE[id]={};STATE[id][f]=v;if(f==='nextNote')renderPrepBanner();}
-function flg(id){if(!STATE[id])STATE[id]={};STATE[id].flagged=!STATE[id].flagged;renderStops();if(STATE[id].flagged)toast('Manager flagged — add detail in EOD');}
+function tog(id){EX=EX===id?null:id;rst();}
+function so(id,o){if(!STATE[id])STATE[id]={};STATE[id].o=o;if(!STATE[id].time)STATE[id].time=new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});rst();ukpi();toast(o==='sold'?'Sale logged':o==='demo'?'Demo logged':'Logged');}
+function arr(id){if(!STATE[id])STATE[id]={};STATE[id].time=new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});rst();toast('Arrival stamped');}
+function uf(id,f,v){if(!STATE[id])STATE[id]={};STATE[id][f]=v;if(f==='nn')rpb();}
+function flg(id){if(!STATE[id])STATE[id]={};STATE[id].fl=!STATE[id].fl;rst();if(STATE[id].fl)toast('Manager flagged — add detail in EOD');}
 
-function updateKPIs(){
-  const stops=getStops();let s=0,inv=0,d=0,q=0,tot=0,ct=0;
+function ukpi(){
+  const stops=gSt();let s=0,inv=0,d=0,q=0,tot=0,ct=0;
   stops.forEach(st=>{const dd=STATE[st.id];if(!dd||!dd.o||dd.o==='skip')return;s++;if(dd.o==='sold'){inv++;if(dd.val){tot+=parseFloat(dd.val);ct++;}}if(dd.o==='demo')d++;if(dd.o==='quoted')q++;});
   const t=20;const pct=Math.min(100,Math.round(s/t*100));
   document.getElementById('kS').textContent=s+'/'+stops.length;
   document.getElementById('kI').textContent=inv;document.getElementById('kD').textContent=d;document.getElementById('kQ').textContent=q;
   document.getElementById('kA').textContent=ct>0?'$'+Math.round(tot/ct):'—';document.getElementById('kT').textContent=t;
-  const bar=document.getElementById('progBar');bar.style.width=pct+'%';
+  const bar=document.getElementById('pb');bar.style.width=pct+'%';
   bar.style.background=pct>=100?'#1D9E75':pct>=60?'#BA7517':'#E24B4A';
-  document.getElementById('progLbl').textContent=s+' of '+t+' stops'+(pct>=100?' — target hit!':'');
+  document.getElementById('pltxt').textContent=s+' of '+t+' stops'+(pct>=100?' — target hit!':'');
 }
 
-function renderLeaderboard(){
-  const me=document.getElementById('repSel').value||curRep;
+function rlb(){
+  const me=document.getElementById('rsel').value||CR;
   const data=[
-    {key:'Ron',name:'Ron',area:'South Auckland',stops:14,inv:4,demos:2,aov:285},
-    {key:'Rep2',name:'Rep 2',area:'Auckland City',stops:18,inv:6,demos:3,aov:310},
-    {key:'Hamilton',name:'Hamilton Rep',area:'Hamilton / Waikato',stops:11,inv:3,demos:1,aov:195},
+    {k:'Ron',n:'Ron',a:'South Auckland',st:14,inv:4,dm:2,aov:285},
+    {k:'Rep2',n:'Rep 2',a:'Auckland City',st:18,inv:6,dm:3,aov:310},
+    {k:'Ham',n:'Hamilton Rep',a:'Hamilton / Waikato',st:11,inv:3,dm:1,aov:195},
   ];
-  const score=r=>r.stops+r.inv*3+r.demos*2;
-  const sorted=[...data].sort((a,b)=>score(b)-score(a));
-  const mx={stops:Math.max(...sorted.map(r=>r.stops)),inv:Math.max(...sorted.map(r=>r.inv)),demos:Math.max(...sorted.map(r=>r.demos))};
+  const sc=r=>r.st+r.inv*3+r.dm*2;
+  const sorted=[...data].sort((a,b)=>sc(b)-sc(a));
+  const mx={st:Math.max(...sorted.map(r=>r.st)),inv:Math.max(...sorted.map(r=>r.inv)),dm:Math.max(...sorted.map(r=>r.dm))};
   const rks=['rk1','rk2','rk3'];
-  document.getElementById('lbCards').innerHTML=sorted.map((r,i)=>`
-    <div class="lb-card${r.key===me?' me':''}">
-      <div class="lb-rank-badge ${rks[i]}">#${i+1}</div>
-      <div class="lb-rep-name">${r.name}</div>
-      <div class="lb-rep-area">${r.area}</div>
-      <div class="lb-bars">
-        <div class="lb-bar-row"><span class="lb-bar-lbl">Stops</span><div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round(r.stops/mx.stops*100)}%;background:#1D9E75"></div></div><span class="lb-bar-val">${r.stops}</span></div>
-        <div class="lb-bar-row"><span class="lb-bar-lbl">Sales</span><div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round(r.inv/mx.inv*100)}%;background:#185FA5"></div></div><span class="lb-bar-val">${r.inv}</span></div>
-        <div class="lb-bar-row"><span class="lb-bar-lbl">Demos</span><div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round(r.demos/mx.demos*100)}%;background:#BA7517"></div></div><span class="lb-bar-val">${r.demos}</span></div>
+  document.getElementById('lbc').innerHTML=sorted.map((r,i)=>`
+    <div class="lbcard${r.k===me?' me':''}">
+      <div class="lbrk ${rks[i]}">#${i+1}</div>
+      <div class="lbn">${r.n}</div><div class="lba">${r.a}</div>
+      <div class="lbb">
+        <div class="lbbr"><span class="lbbl">Stops</span><div class="lbbt"><div class="lbbf" style="width:${Math.round(r.st/mx.st*100)}%;background:#1D9E75"></div></div><span class="lbbv">${r.st}</span></div>
+        <div class="lbbr"><span class="lbbl">Sales</span><div class="lbbt"><div class="lbbf" style="width:${Math.round(r.inv/mx.inv*100)}%;background:#185FA5"></div></div><span class="lbbv">${r.inv}</span></div>
+        <div class="lbbr"><span class="lbbl">Demos</span><div class="lbbt"><div class="lbbf" style="width:${Math.round(r.dm/mx.dm*100)}%;background:#BA7517"></div></div><span class="lbbv">${r.dm}</span></div>
       </div>
-      <div class="lb-total">AOV: <strong>$${r.aov}</strong> · Score: <strong>${score(r)}</strong></div>
+      <div class="lbto">AOV: <strong>$${r.aov}</strong> · Score: <strong>${sc(r)}</strong></div>
     </div>`).join('');
 }
 
-function renderMessages(){
-  document.getElementById('msgList').innerHTML=MESSAGES.map(m=>`
-    <div class="msg-card${m.isLead?' lead':''}">
-      <div class="msg-hdr"><span class="msg-from">${m.from}</span><span class="msg-time">${m.time}</span>${m.isLead?'<span class="msg-tag">Lead tip</span>':''}</div>
-      <div class="msg-body">${m.body}</div>
+function rmsg(){
+  document.getElementById('mlist').innerHTML=MSGS.map(m=>`
+    <div class="mcard${m.ld?' ld':''}">
+      <div class="mhdr"><span class="mfr">${m.from}</span><span class="mti">${m.time}</span>${m.ld?'<span class="mtag">Lead tip</span>':''}</div>
+      <div class="mbdy">${m.body}</div>
     </div>`).join('');
 }
 
-function sendMsg(isLead){
-  const rep=document.getElementById('repSel').value;if(!rep){toast('Select your name first');return;}
-  const txt=document.getElementById('msgInput').value.trim();if(!txt){toast('Enter a message first');return;}
-  const names={Ron:'Ron',Rep2:'Rep 2',Hamilton:'Hamilton Rep'};
-  MESSAGES.push({from:names[rep]||rep,time:new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'}),body:txt,isLead});
-  document.getElementById('msgInput').value='';renderMessages();toast(isLead?'Lead tip sent':'Message sent');
+function sendM(ld){
+  const rep=document.getElementById('rsel').value;if(!rep){toast('Select your name first');return;}
+  const txt=document.getElementById('mi').value.trim();if(!txt){toast('Enter a message first');return;}
+  const nm={Ron:'Ron',Rep2:'Rep 2',Ham:'Hamilton Rep'};
+  MSGS.push({from:nm[rep]||rep,time:new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'}),body:txt,ld});
+  document.getElementById('mi').value='';rmsg();toast(ld?'Lead tip sent':'Message sent');
 }
 
-function showModal(){document.getElementById('modalWrap').style.display='block';setTimeout(()=>document.getElementById('mName').focus(),100);}
-function hideModal(){document.getElementById('modalWrap').style.display='none';}
-function addStop(){
-  const name=document.getElementById('mName').value.trim();if(!name){toast('Enter a business name');return;}
+function showMod(){document.getElementById('modw').style.display='block';setTimeout(()=>document.getElementById('mNm').focus(),100);}
+function hideMod(){document.getElementById('modw').style.display='none';}
+function addSt(){
+  const nm=document.getElementById('mNm').value.trim();if(!nm){toast('Enter a business name');return;}
   const id='c-'+Date.now();
-  const stop={id,a:name,addr:document.getElementById('mAddr').value.trim(),contact:document.getElementById('mContact').value.trim(),phone:document.getElementById('mPhone').value.trim(),email:document.getElementById('mEmail').value.trim(),cycle:parseInt(document.getElementById('mCycle').value),n:document.getElementById('mNote').value.trim(),pre:''};
-  if(!ROUTES[curRep][curRouteKey])ROUTES[curRep][curRouteKey]={area:'Custom',stops:[]};
-  ROUTES[curRep][curRouteKey].stops.push(stop);
-  STATE[id]={o:null,note:'',val:'',time:null,nextNote:'',referral:'',flagged:false,cycle:stop.cycle,contact:stop.contact,phone:stop.phone,email:stop.email};
-  hideModal();['mName','mAddr','mContact','mPhone','mEmail','mNote'].forEach(x=>document.getElementById(x).value='');
-  renderStops();updateKPIs();toast('Stop added');
+  const st={id,a:nm,addr:document.getElementById('mAd').value.trim(),contact:document.getElementById('mCo').value.trim(),phone:document.getElementById('mPh').value.trim(),email:document.getElementById('mEm').value.trim(),cycle:parseInt(document.getElementById('mCy').value),n:document.getElementById('mNo').value.trim(),pre:''};
+  if(!ROUTES[CR][CRK])ROUTES[CR][CRK]={area:'Custom',stops:[]};
+  ROUTES[CR][CRK].stops.push(st);
+  STATE[id]={o:null,note:'',val:'',time:null,nn:'',ref:'',fl:false,cy:st.cycle,co:st.contact,ph:st.phone,em:st.email};
+  hideMod();['mNm','mAd','mCo','mPh','mEm','mNo'].forEach(x=>document.getElementById(x).value='');
+  rst();ukpi();toast('Stop added');
 }
 
-function submitDay(){
-  const rep=document.getElementById('repSel').value;if(!rep){toast('Select your name first');return;}
-  const stops=getStops();let s=0,inv=0,dm=0,q=0,tot=0,ct=0;const dets=[],flags=[],refs=[];
-  stops.forEach(st=>{const d=STATE[st.id];if(!d||!d.o)return;if(d.o!=='skip')s++;if(d.o==='sold'){inv++;if(d.val){tot+=parseFloat(d.val);ct++;}}if(d.o==='demo')dm++;if(d.o==='quoted')q++;if(d.o&&d.o!=='skip')dets.push(st.a+' — '+d.o+(d.note?' | '+d.note:''));if(d.flagged)flags.push(st.a);if(d.referral&&d.referral.trim())refs.push(st.a+': '+d.referral);});
+function subDay(){
+  const rep=document.getElementById('rsel').value;if(!rep){toast('Select your name first');return;}
+  const stops=gSt();let s=0,inv=0,dm=0,q=0,tot=0,ct=0;const dets=[],flags=[],refs=[];
+  stops.forEach(st=>{const d=STATE[st.id];if(!d||!d.o)return;if(d.o!=='skip')s++;if(d.o==='sold'){inv++;if(d.val){tot+=parseFloat(d.val);ct++;}}if(d.o==='demo')dm++;if(d.o==='quoted')q++;if(d.o&&d.o!=='skip')dets.push(st.a+' — '+d.o+(d.note?' | '+d.note:''));if(d.fl)flags.push(st.a);if(d.ref&&d.ref.trim())refs.push(st.a+': '+d.ref);});
   const aov=ct>0?'$'+Math.round(tot/ct):'n/a';
-  const names={Ron:'Ron',Rep2:'Rep 2',Hamilton:'Hamilton Rep'};
-  const lines=['**Autosmart — End of Day Report**','**'+fmtFull(TODAY)+' | Cycle '+viewCycle+' · '+getArea()+'**','','**Rep:** '+(names[rep]||rep),'','**KPIs**','Stops: '+s+'/'+stops.length+'  |  Invoices: '+inv+'  |  Demos: '+dm+'  |  Quotes: '+q+'  |  AOV: '+aov,''];
+  const nm={Ron:'Ron',Rep2:'Rep 2',Ham:'Hamilton Rep'};
+  const lines=['**Autosmart — End of Day Report**','**'+ff(TODAY)+' | Cycle '+VC+' · '+gAr()+'**','','**Rep:** '+(nm[rep]||rep),'','**KPIs**','Stops: '+s+'/'+stops.length+'  |  Invoices: '+inv+'  |  Demos: '+dm+'  |  Quotes: '+q+'  |  AOV: '+aov,''];
   if(dets.length){lines.push('**Stops logged**');dets.forEach(d=>lines.push('• '+d));lines.push('');}
   if(flags.length){lines.push('**Manager flags**');flags.forEach(f=>lines.push('• '+f));lines.push('');}
   if(refs.length){lines.push('**Referrals captured**');refs.forEach(r=>lines.push('• '+r));lines.push('');}
-  const notes=document.getElementById('eodN').value;const cbs=document.getElementById('eodC').value;
+  const notes=document.getElementById('eN').value;const cbs=document.getElementById('eC').value;
   if(notes)lines.push('**Notes**',notes,'');if(cbs)lines.push('**Call backs**',cbs,'');
   lines.push('_Submitted via Autosmart Digital Run Sheet v4_');
   navigator.clipboard.writeText(lines.join('\n')).catch(()=>{});
@@ -744,15 +1202,12 @@ function submitDay(){
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-// Show install banner on iOS Safari
 const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.navigator.standalone;
-if(isIOS)document.getElementById('installBanner').classList.add('visible');
+if(isIOS)document.getElementById('inst').classList.add('vis');
 
-// Auto-select today's route
-const todayDow=TODAY.getDay();
-const dowMap={1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri'};
-curRouteKey='W'+todayInfo.week+'-'+(dowMap[todayDow]||'Mon');
-initState();buildRouteGrid();renderAll();
+const tdow=TODAY.getDay();const dm={1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri'};
+CRK='W'+TI.week+'-'+(dm[tdow]||'Mon');
+initS();brgd();rall();
 </script>
 </body>
 </html>
