@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AS RunSheet">
+<meta name="theme-color" content="#1D9E75">
+<title>Autosmart Run Sheet</title>
+<style>
+:root{
+  --green:#1D9E75;--green-lt:#E1F5EE;--green-dk:#0F6E56;
+  --blue:#185FA5;--blue-lt:#E6F1FB;
+  --amber:#BA7517;--amber-lt:#FAEEDA;
+  --red:#A32D2D;--red-lt:#FCEBEB;
+  --purple:#534AB7;--purple-lt:#EEEDFE;
+  --bg:#F5F4F0;--surface:#FFFFFF;
+  --border:rgba(0,0,0,0.1);--border-s:rgba(0,0,0,0.18);
+  --text:#1A1A18;--text2:#5A5A56;--text3:#9A9A94;
+  --r:12px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;background:var(--bg)}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:.5px solid var(--border);padding:calc(.75rem + env(safe-area-inset-top)) 1rem .75rem;position:sticky;top:0;z-index:200}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;gap:8px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:8px}
+.lmark{width:28px;height:28px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lmark svg{width:14px;height:14px;fill:white}
+.ltxt{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.ltxt span{color:var(--green)}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rep-sel{font-size:13px;padding:7px 10px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A94'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
+.cycle-badge{font-size:11px;font-family:ui-monospace,monospace;background:var(--bg);border:.5px solid var(--border-s);border-radius:20px;padding:4px 10px;color:var(--text2);white-space:nowrap}
+.cycle-badge strong{color:var(--green);font-weight:600}
+
+/* KPI */
+.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:.5rem}
+.kpi{background:var(--bg);border-radius:var(--rs);padding:7px 6px;text-align:center}
+.kl{font-size:9px;color:var(--text3);font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px;margin-bottom:1px}
+.kv{font-size:16px;font-weight:600;line-height:1}
+.kv.g{color:var(--green)}.kv.a{color:var(--amber)}.kv.b{color:var(--blue)}
+.prog-wrap{margin-top:.4rem;background:var(--border);border-radius:4px;height:3px;overflow:hidden}
+.prog-bar{height:100%;background:var(--green);border-radius:4px;transition:width .3s}
+.prog-lbl{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;margin-top:2px;text-align:right}
+
+/* ROUTE SECTION */
+.route-section{background:var(--surface);border-bottom:.5px solid var(--border);padding:.6rem 1rem}
+.cycle-nav{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.cnbtn{font-size:12px;padding:5px 12px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text2);cursor:pointer;-webkit-appearance:none}
+.cnbtn:active{transform:scale(.96);background:var(--green-lt)}
+.cnlbl{font-size:12px;font-family:ui-monospace,monospace;font-weight:600;flex:1;text-align:center;color:var(--text)}
+.route-grid{display:grid;grid-template-columns:auto repeat(5,1fr);gap:3px;align-items:center}
+.rg-corner,.rg-dh{font-size:9px;font-family:ui-monospace,monospace;color:var(--text3);text-transform:uppercase;text-align:center}
+.rg-wl{font-size:9px;font-family:ui-monospace,monospace;color:var(--text3);text-transform:uppercase;padding-right:4px;white-space:nowrap}
+.rg-btn{font-size:10px;font-weight:500;padding:5px 2px;border-radius:var(--rs);border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;text-align:center;line-height:1.25;width:100%;-webkit-appearance:none}
+.rg-btn:active{transform:scale(.95)}
+.rg-btn.active{background:var(--green);color:white;border-color:var(--green)}
+.rg-btn.today:not(.active){border-color:var(--green);color:var(--green-dk);font-weight:600}
+.rg-btn.free{border-style:dashed;color:var(--text3)}
+.rg-btn.free.active{background:#888780;border-color:#888780;color:white;border-style:solid}
+.rg-date{font-size:9px;display:block;opacity:.75;margin-top:1px;font-family:ui-monospace,monospace;font-weight:400}
+.rg-area{font-size:9px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;opacity:.85}
+
+/* VIEW TABS */
+.view-tabs{display:flex;gap:6px;padding:.5rem 1rem;background:var(--surface);border-bottom:.5px solid var(--border)}
+.vtab{font-size:13px;font-weight:500;padding:7px 16px;border-radius:var(--rs);border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;-webkit-appearance:none;flex:1}
+.vtab:active{transform:scale(.97)}
+.vtab.active{background:var(--green);color:white;border-color:var(--green)}
+
+/* MAIN */
+.main{padding:.75rem 1rem}
+.view-panel{display:none}.view-panel.active{display:block}
+
+/* LEADERBOARD */
+.lb-title{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);margin-bottom:.5rem}
+.lb-cards{display:flex;flex-direction:column;gap:10px}
+.lb-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:.9rem 1rem;position:relative;overflow:hidden}
+.lb-card.me{border-color:var(--green);border-width:1.5px}
+.lb-rank-badge{position:absolute;top:0;right:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border-radius:0 var(--r) 0 var(--r)}
+.rk1{background:var(--amber-lt);color:#854F0B}
+.rk2{background:var(--bg);color:var(--text2)}
+.rk3{background:#EAF3DE;color:#3B6D11}
+.lb-rep-name{font-size:15px;font-weight:600;margin-bottom:1px}
+.lb-rep-area{font-size:11px;color:var(--text3);font-family:ui-monospace,monospace;margin-bottom:.6rem}
+.lb-bars{display:flex;flex-direction:column;gap:5px}
+.lb-bar-row{display:flex;align-items:center;gap:8px}
+.lb-bar-lbl{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;width:38px;text-transform:uppercase}
+.lb-bar-track{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.lb-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.lb-bar-val{font-size:11px;font-family:ui-monospace,monospace;color:var(--text2);min-width:20px;text-align:right}
+.lb-total{font-size:12px;color:var(--text2);margin-top:.5rem;font-family:ui-monospace,monospace}
+.lb-total strong{color:var(--text);font-weight:600}
+
+/* PREP BANNER */
+.prep-banner{background:var(--amber-lt);border:.5px solid #EF9F27;border-radius:var(--rs);padding:.6rem .9rem;margin-bottom:.65rem;font-size:13px;color:#854F0B;line-height:1.5}
+.prep-title{font-weight:600;margin-bottom:3px}
+.ro-banner{background:var(--blue-lt);border:.5px solid var(--blue);border-radius:var(--rs);padding:.55rem .9rem;font-size:12px;color:var(--blue);margin-bottom:.65rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.suggest-btn{font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--rs);border:.5px solid var(--blue);background:white;color:var(--blue);cursor:pointer;-webkit-appearance:none;white-space:nowrap}
+.suggest-btn:active{transform:scale(.96)}
+
+/* STOPS */
+.stop-list{display:flex;flex-direction:column;gap:6px;margin-bottom:.75rem}
+.sc{background:var(--surface);border-radius:var(--r);border:.5px solid var(--border);overflow:hidden;transition:border-color .15s}
+.sc.done{border-color:var(--green)}.sc.skipped{opacity:.55}.sc.flagged{border-color:var(--red)}
+.sh{display:flex;align-items:center;gap:8px;padding:.7rem .9rem;cursor:pointer;user-select:none;-webkit-user-select:none;min-height:54px}
+.sh:active{background:var(--bg)}
+.dh{color:var(--text3);font-size:14px;cursor:grab;flex-shrink:0;padding:0 2px}
+.snum{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text3);font-family:ui-monospace,monospace}
+.snum.done{background:var(--green);color:white}.snum.fl{background:var(--red);color:white}
+.si{flex:1;min-width:0}
+.sname{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.1px}
+.saddr{font-size:12px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stime{font-size:10px;color:var(--green);font-family:ui-monospace,monospace;margin-top:2px}
+.sbdg{display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0}
+.badge{font-size:10px;font-weight:600;padding:3px 7px;border-radius:10px;white-space:nowrap}
+.bc{background:var(--green-lt);color:var(--green-dk)}.bq{background:var(--blue-lt);color:var(--blue)}
+.bsold{background:var(--green);color:white}.bna{background:var(--red-lt);color:var(--red)}
+.bskip{background:var(--bg);color:var(--text3)}.bcyc{background:var(--purple-lt);color:var(--purple)}
+.bfl{background:var(--red-lt);color:var(--red)}
+.chev{font-size:11px;color:var(--text3);transition:transform .15s;flex-shrink:0}
+.chev.open{transform:rotate(90deg)}
+
+/* DETAIL */
+.sdet{display:none;border-top:.5px solid var(--border);padding:.85rem .9rem}
+.sdet.open{display:block}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.7rem}
+.cf{display:flex;flex-direction:column;gap:3px}
+.flbl{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px}
+.cf input,.mf input,.mf select{font-size:14px;padding:9px 11px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);width:100%;-webkit-appearance:none;-webkit-text-size-adjust:100%}
+.cf input:focus,.mf input:focus,.mf select:focus{outline:none;border-color:var(--green)}
+.cl{display:flex;gap:6px;margin-bottom:.7rem;flex-wrap:wrap}
+.clink{font-size:13px;font-weight:600;padding:9px 15px;border-radius:var(--rs);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.clink.ph{background:var(--green-lt);color:var(--green-dk);border:.5px solid var(--green)}
+.clink.em{background:var(--blue-lt);color:var(--blue);border:.5px solid var(--blue)}
+.clink:active{transform:scale(.96)}
+.cy-row{display:flex;align-items:center;gap:8px;margin-bottom:.7rem}
+.cy-row span{font-size:13px;color:var(--text2)}
+.cy-sel{font-size:13px;padding:7px 10px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);-webkit-appearance:none}
+.bg-note{font-size:13px;color:var(--text2);background:var(--bg);border-radius:var(--rs);padding:9px 11px;margin-bottom:.7rem;line-height:1.55}
+.orow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.7rem}
+.ob{font-size:13px;font-weight:600;padding:8px 14px;border-radius:20px;border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;-webkit-appearance:none;transition:all .1s}
+.ob:active{transform:scale(.94)}
+.ob.as{background:var(--green);color:white;border-color:var(--green)}
+.ob.aq{background:var(--blue);color:white;border-color:var(--blue)}
+.ob.ad{background:var(--amber);color:white;border-color:var(--amber)}
+.ob.at{background:var(--purple);color:white;border-color:var(--purple)}
+.ob.an{background:var(--red-lt);color:var(--red);border-color:var(--red)}
+.ob.aski{background:var(--bg);color:var(--text3)}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.7rem}
+.ng textarea,.fn textarea,.eod-grid textarea,.ref-box textarea,.msg-compose textarea{font-size:14px;padding:9px 11px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);resize:vertical;min-height:56px;line-height:1.5;width:100%;-webkit-appearance:none;-webkit-text-size-adjust:100%}
+.ng textarea:focus,.fn textarea:focus,.eod-grid textarea:focus,.ref-box textarea:focus,.msg-compose textarea:focus{outline:none;border-color:var(--green)}
+.fn{margin-bottom:.7rem}
+.ref-box{background:var(--bg);border-radius:var(--rs);padding:.6rem .8rem;margin-bottom:.7rem}
+.ref-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.4rem;display:flex;align-items:center;gap:5px}
+.ref-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.ref-box textarea{background:var(--surface)}
+.ar{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.oi{width:90px;font-size:14px;font-family:ui-monospace,monospace;padding:9px 10px;border-radius:var(--rs);border:.5px solid var(--border-s);background:var(--bg);color:var(--text);-webkit-appearance:none}
+.oi:focus{outline:none;border-color:var(--green)}
+.abtn{font-size:13px;font-weight:600;padding:9px 16px;border-radius:var(--rs);border:.5px solid var(--green);background:var(--green-lt);color:var(--green-dk);cursor:pointer;-webkit-appearance:none;white-space:nowrap}
+.abtn.done{background:var(--green);color:white}
+.abtn:active{transform:scale(.96)}
+.fbtn{font-size:13px;font-weight:600;padding:9px 13px;border-radius:var(--rs);border:.5px solid var(--red);background:var(--red-lt);color:var(--red);cursor:pointer;-webkit-appearance:none;margin-left:auto}
+.fbtn.active{background:var(--red);color:white}
+.fbtn:active{transform:scale(.96)}
+
+/* MESSAGES */
+.msg-title{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);margin-bottom:.5rem}
+.msg-list{display:flex;flex-direction:column;gap:8px;margin-bottom:.65rem}
+.msg-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);padding:.7rem .9rem}
+.msg-card.lead{border-color:var(--amber)}
+.msg-hdr{display:flex;align-items:center;gap:7px;margin-bottom:.3rem}
+.msg-from{font-size:13px;font-weight:600}
+.msg-time{font-size:11px;color:var(--text3);font-family:ui-monospace,monospace}
+.msg-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;background:var(--amber-lt);color:#854F0B}
+.msg-body{font-size:13px;color:var(--text2);line-height:1.5}
+.msg-compose{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.msg-compose textarea{min-height:60px}
+.msg-actions{display:flex;flex-direction:column;gap:6px}
+.msg-send{font-size:12px;font-weight:600;padding:9px 12px;border-radius:var(--rs);border:none;background:var(--green);color:white;cursor:pointer;-webkit-appearance:none}
+.msg-send:active{transform:scale(.96)}
+.msg-lead-btn{font-size:12px;font-weight:600;padding:9px 12px;border-radius:var(--rs);border:.5px solid var(--amber);background:var(--amber-lt);color:#854F0B;cursor:pointer;-webkit-appearance:none}
+.msg-lead-btn:active{transform:scale(.96)}
+
+/* MODAL */
+.modal-wrap{display:none;padding:0 0 .75rem}
+.modal-bg{background:rgba(0,0,0,0.4);border-radius:var(--r);padding:1.5rem 1rem;display:flex;align-items:flex-start;justify-content:center;min-height:300px}
+.modal{background:var(--surface);border-radius:var(--r);padding:1.2rem;width:100%;max-width:480px}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:.9rem}
+.mf{margin-bottom:.7rem}
+.mf label{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.3px;color:var(--text3);display:block;margin-bottom:4px}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:.9rem}
+.btn-cancel{font-size:14px;padding:9px 16px;border-radius:var(--rs);border:.5px solid var(--border-s);background:transparent;color:var(--text2);cursor:pointer;-webkit-appearance:none}
+.btn-cancel:active{transform:scale(.96)}
+.btn-add{font-size:14px;font-weight:600;padding:9px 16px;border-radius:var(--rs);border:none;background:var(--green);color:white;cursor:pointer;-webkit-appearance:none}
+.btn-add:active{transform:scale(.96)}
+
+/* EOD */
+.eod{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.75rem}
+.eod-title{font-size:10px;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);margin-bottom:.65rem}
+.eod-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.65rem}
+.sbtn{width:100%;padding:13px;border-radius:var(--rs);border:none;background:var(--green);color:white;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+.sbtn:active{transform:scale(.99);background:var(--green-dk)}
+.add-stop-btn{width:100%;padding:11px;border-radius:var(--rs);border:.5px dashed var(--border-s);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;-webkit-appearance:none;margin-bottom:.75rem}
+.add-stop-btn:active{background:var(--green-lt);border-color:var(--green);color:var(--green-dk)}
+.empty-day{text-align:center;padding:2.5rem 1rem;color:var(--text3);font-size:14px}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:var(--surface);font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;z-index:999;transition:transform .25s ease;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* INSTALL BANNER */
+.install-banner{background:var(--green);color:white;padding:.65rem 1rem;font-size:12px;text-align:center;line-height:1.5;display:none}
+.install-banner.visible{display:block}
+
+@media(max-width:480px){
+  .kpi-strip{grid-template-columns:repeat(3,1fr)}
+  .kpi-strip .kpi:nth-child(n+4){display:none}
+  .cg,.ng,.eod-grid{grid-template-columns:1fr}
+  .route-grid{font-size:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="install-banner" id="installBanner">
+  To install: tap the Share button, then "Add to Home Screen"
+</div>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">
+      <div class="lmark"><svg viewBox="0 0 16 16"><path d="M8 1L1 5v6l7 4 7-4V5L8 1zm0 2l5 2.9v5.2L8 14l-5-2.9V5.9L8 3z"/></svg></div>
+      <div class="ltxt"><span>Auto</span>smart</div>
+    </div>
+    <div class="hdr-right">
+      <select class="rep-sel" id="repSel" onchange="repChanged()">
+        <option value="">— Select rep —</option>
+        <option value="Ron">Ron</option>
+        <option value="Rep2">Rep 2</option>
+        <option value="Hamilton">Hamilton</option>
+      </select>
+      <span class="cycle-badge" id="cycleBadge">Cycle <strong>—</strong></span>
+    </div>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kl">Stops</div><div class="kv" id="kS">0/0</div></div>
+    <div class="kpi"><div class="kl">Invoices</div><div class="kv g" id="kI">0</div></div>
+    <div class="kpi"><div class="kl">Demos</div><div class="kv a" id="kD">0</div></div>
+    <div class="kpi"><div class="kl">Quotes</div><div class="kv b" id="kQ">0</div></div>
+    <div class="kpi"><div class="kl">AOV</div><div class="kv g" id="kA">—</div></div>
+    <div class="kpi"><div class="kl">Target</div><div class="kv" id="kT">20</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
+  <div class="prog-lbl" id="progLbl">0 of 20 stops</div>
+</div>
+
+<div class="route-section">
+  <div class="cycle-nav">
+    <button class="cnbtn" onclick="shiftCycle(-1)">← Prev</button>
+    <div class="cnlbl" id="cycleNavLabel"></div>
+    <button class="cnbtn" onclick="shiftCycle(1)">Next →</button>
+  </div>
+  <div class="route-grid" id="routeGrid"></div>
+</div>
+
+<div class="view-tabs">
+  <button class="vtab active" id="vtab-run" onclick="switchView('run')">Run sheet</button>
+  <button class="vtab" id="vtab-lb" onclick="switchView('lb')">Leaderboard</button>
+  <button class="vtab" id="vtab-msg" onclick="switchView('msg')">Messages</button>
+</div>
+
+<div class="main">
+
+  <div class="view-panel active" id="panel-run">
+    <div id="prepBanner"></div>
+    <div id="roBanner"></div>
+    <div class="stop-list" id="stopList"></div>
+    <button class="add-stop-btn" id="addStopBtn" onclick="showModal()">+ Add stop</button>
+    <div class="eod" id="eodSection">
+      <div class="eod-title">End of day</div>
+      <div class="eod-grid">
+        <div><div class="flbl" style="margin-bottom:4px">Notes</div><textarea id="eodN" placeholder="Key observations..."></textarea></div>
+        <div><div class="flbl" style="margin-bottom:4px">Call backs</div><textarea id="eodC" placeholder="Who to follow up..."></textarea></div>
+      </div>
+      <button class="sbtn" onclick="submitDay()">Submit day</button>
+    </div>
+  </div>
+
+  <div class="view-panel" id="panel-lb">
+    <div class="lb-title">This cycle — standings</div>
+    <div class="lb-cards" id="lbCards"></div>
+  </div>
+
+  <div class="view-panel" id="panel-msg">
+    <div class="msg-title">Team messages &amp; leads</div>
+    <div class="msg-list" id="msgList"></div>
+    <div class="msg-compose">
+      <textarea id="msgInput" placeholder="Message team or suggest a lead..."></textarea>
+      <div class="msg-actions">
+        <button class="msg-send" onclick="sendMsg(false)">Send</button>
+        <button class="msg-lead-btn" onclick="sendMsg(true)">Lead</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-wrap" id="modalWrap">
+  <div class="modal-bg">
+    <div class="modal">
+      <div class="modal-title">Add new stop</div>
+      <div class="mf"><label>Business name</label><input id="mName" type="text" placeholder="e.g. Auckland Detailing Co"></div>
+      <div class="mf"><label>Address</label><input id="mAddr" type="text" placeholder="Street address"></div>
+      <div class="mf"><label>Contact name</label><input id="mContact" type="text" placeholder="Decision maker"></div>
+      <div class="mf"><label>Phone</label><input id="mPhone" type="tel" placeholder="+64 21 000 000"></div>
+      <div class="mf"><label>Email</label><input id="mEmail" type="email" placeholder="contact@business.co.nz"></div>
+      <div class="mf"><label>Visit cycle</label>
+        <select id="mCycle" style="font-size:14px;padding:9px 11px;border-radius:8px;border:.5px solid rgba(0,0,0,0.18);background:#F5F4F0;color:#1A1A18;width:100%">
+          <option value="1">Weekly</option>
+          <option value="2">Fortnightly</option>
+          <option value="4" selected>4 weekly</option>
+          <option value="6">6 weekly</option>
+          <option value="8">8 weekly</option>
+          <option value="12">12 weekly</option>
+        </select>
+      </div>
+      <div class="mf"><label>Notes</label><input id="mNote" type="text" placeholder="What to bring, who to ask for..."></div>
+      <div class="mbtns">
+        <button class="btn-cancel" onclick="hideModal()">Cancel</button>
+        <button class="btn-add" onclick="addStop()">Add to route</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CYCLE_START=new Date('2025-01-05');
+const MS_DAY=86400000;
+function getCycleInfo(d){const days=Math.floor((d-CYCLE_START)/MS_DAY);if(days<0)return{cycle:1,week:1};const c=Math.floor(days/28)+1;const w=Math.floor((days%28)/7)+1;return{cycle:c,week:w};}
+function getDateForCell(cycle,weekIdx,dayIdx){return new Date(CYCLE_START.getTime()+((cycle-1)*28+weekIdx*7+dayIdx)*MS_DAY);}
+function fmtShort(d){return d.toLocaleDateString('en-NZ',{day:'numeric',month:'short'});}
+function fmtFull(d){return d.toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const todayInfo=getCycleInfo(TODAY);
+let viewCycle=todayInfo.cycle;
+let curRep='Ron';
+let curRouteKey='W1-Mon';
+let expandId=null;
+let dragSrc=null;
+
+const FREE_PATTERNS=['Free day','Cold Call','Tauranga'];
+const WEEKS=['W1','W2','W3','W4'];
+const DAYS=['Mon','Tue','Wed','Thu','Fri'];
+
+const ROUTES={
+  Ron:{
+    'W1-Mon':{area:'Mangere',stops:[
+      {id:'r-m1-1',a:'Carpoint',addr:'104 Montgomerie Rd',contact:'Khurram',phone:'',email:'',n:'Wants to buy next month',pre:'',cycle:4},
+      {id:'r-m1-2',a:'ED Pacific Horizon',addr:'164 Montgomerie Rd',contact:'',phone:'',email:'',n:'Quoted — follow up',pre:'Q',cycle:4},
+      {id:'r-m1-3',a:'Aero Automotive',addr:'9 Brigade Rd',contact:'Stu',phone:'',email:'',n:'Customer',pre:'S',cycle:4},
+      {id:'r-m1-4',a:'Trans Mech',addr:'15 Andrew Baxter Dr',contact:'Keith',phone:'',email:'',n:'Willing to trial — call back',pre:'',cycle:4},
+      {id:'r-m1-5',a:'Asplundh',addr:'50 Andrew Baxter Dr',contact:'',phone:'',email:'',n:'Quoted — call in',pre:'Q',cycle:4},
+      {id:'r-m1-6',a:'Interstate Trucking',addr:'32 Pavilion Drive',contact:'Vejay',phone:'',email:'',n:'Gave quote',pre:'Q',cycle:4},
+      {id:'r-m1-7',a:'Hire Ace',addr:'12 Pavilion Drive',contact:'Karan',phone:'',email:'',n:'Decision maker Pacer — do quote',pre:'',cycle:4},
+      {id:'r-m1-8',a:'Endraulic',addr:'3 Rennie Drive',contact:'Brett',phone:'',email:'',n:'Quoted — see early December',pre:'Q',cycle:4},
+      {id:'r-m1-9',a:'Bus Travel NZ',addr:'2 Rennie Drive',contact:'John',phone:'',email:'',n:'Quoted, wants to try HSNS',pre:'Q',cycle:4},
+      {id:'r-m1-10',a:'ACM Motorhomes',addr:'21 Rennie Drive',contact:'Loretta',phone:'',email:'',n:'Paint protection quoted',pre:'Q',cycle:4},
+      {id:'r-m1-11',a:'Auto Supershoppe',addr:'42 Rennie Drive',contact:'',phone:'',email:'',n:'Uses Wurth — call in again',pre:'',cycle:4},
+      {id:'r-m1-12',a:'Lucky Campers',addr:'5 Aintree Ave',contact:'Nathan',phone:'',email:'',n:'Quote sent — needs follow up',pre:'Q',cycle:4},
+      {id:'r-m1-13',a:'CTG Earthmoving',addr:'31 Aintree',contact:'',phone:'',email:'',n:'Call in',pre:'',cycle:4},
+      {id:'r-m1-14',a:'24/7 Mechanical',addr:'21 Brigade Rd',contact:'Navi',phone:'021992929',email:'',n:'Discuss haulage and Detailer',pre:'',cycle:4},
+      {id:'r-m1-15',a:'TUI Campers',addr:'142 Robertson Rd',contact:'Paul',phone:'',email:'',n:'Needs quote — H/O Christchurch',pre:'',cycle:4},
+      {id:'r-m1-16',a:'Kiwi Campers',addr:'8/197 Montgomerie Rd',contact:'Brema',phone:'',email:'',n:'Sort gloves issue',pre:'S',cycle:4},
+    ]},
+    'W1-Tue':{area:'Mangere Prime',stops:[
+      {id:'r-t1-1',a:'Ezu Car Rental',addr:'67 Montgomerie Rd',contact:'Kyo / Will',phone:'',email:'',n:'Quoted — have purchased',pre:'S',cycle:4},
+      {id:'r-t1-2',a:'Great Rentals Limited',addr:'110 Montgomerie Rd',contact:'Nick',phone:'021830776',email:'',n:'Also 64 Walls Rd Penrose',pre:'',cycle:4},
+      {id:'r-t1-3',a:'Omega Rental Cars',addr:'3 Kingsford Smith Pl',contact:'Satya',phone:'',email:'',n:'Appointment with Satya and service manager',pre:'',cycle:4},
+      {id:'r-t1-4',a:'Travvia Group',addr:'9 Richard Pearse Drive',contact:'Freya / Trae',phone:'',email:'',n:'Quoted — follow up',pre:'Q',cycle:4},
+      {id:'r-t1-5',a:'Metro Bus',addr:'10 Penihana Pl',contact:'Ahmed',phone:'0272905275',email:'',n:'Ops manager',pre:'',cycle:4},
+    ]},
+    'W1-Wed':{area:'Otahuhu',stops:[
+      {id:'r-w1-1',a:'Vehicle Direct',addr:'28-30 Great South Rd',contact:'Cole / Vik',phone:'',email:'',n:'Aim for group deal',pre:'Q',cycle:4},
+      {id:'r-w1-2',a:'Carplus Auto Service',addr:'Behind Vehicle Direct',contact:'Namir',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-w1-3',a:'VTR Van and Truck',addr:'17 Kaka St',contact:'Jonathan',phone:'',email:'',n:'Customer — floor cleaner',pre:'S',cycle:4},
+      {id:'r-w1-4',a:'Ashtons Crane Hire',addr:'9 Titi St',contact:'Selwynn',phone:'021538590',email:'',n:'Call ahead next visit',pre:'',cycle:4},
+      {id:'r-w1-5',a:'VT Transport',addr:'45 Station Rd',contact:'Eric',phone:'',email:'',n:'Potential good customer',pre:'Q',cycle:4},
+      {id:'r-w1-6',a:'Walters Transport',addr:'20 Walmsley Rd',contact:'Rick',phone:'',email:'',n:'',pre:'S',cycle:4},
+    ]},
+    'W1-Thu':{area:'Papatoetoe',stops:[
+      {id:'r-th1-1',a:'Henderson Cars',addr:'194 Cavendish Rd',contact:'Jasvir',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-th1-2',a:'Tony Allen Auto',addr:'139 Cavendish Rd',contact:'',phone:'',email:'',n:'Customer',pre:'S',cycle:4},
+      {id:'r-th1-3',a:'Trust Motors',addr:'10 Norman Spencer Dr',contact:'Harmon',phone:'',email:'',n:'Demo Cobalt / Dash Dandy',pre:'Q',cycle:4},
+      {id:'r-th1-4',a:'1st Marine / Trucks',addr:'717 Great South Road',contact:'',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-th1-5',a:'Cheapcar',addr:'713A Great South Road',contact:'Phil / Hemant',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-th1-6',a:'Clean Cars NZ',addr:'25B Norman Spencer Dr',contact:'',phone:'',email:'',n:'Moving — keep in touch',pre:'S',cycle:4},
+    ]},
+    'W1-Fri':{area:'Free day',stops:[]},
+    'W2-Mon':{area:'Manukau',stops:[
+      {id:'r-m2-1',a:'Final Touch',addr:'Unit 8/18 Lambie Drive',contact:'Ross',phone:'',email:'',n:'Demo vs Komi H9',pre:'',cycle:4},
+      {id:'r-m2-2',a:'Elite Car Detailing',addr:'Ryan Place',contact:'Nick',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-m2-3',a:'South Auckland Motors Ford',addr:'2 Gladding Place',contact:'Steve',phone:'',email:'',n:'Enviro, platinum, barrel prices',pre:'S',cycle:4},
+      {id:'r-m2-4',a:'ENZED',addr:'Ryan Place',contact:'Ray',phone:'',email:'',n:'Samples given — try handcleaner',pre:'Q',cycle:4},
+      {id:'r-m2-5',a:'Gen 2 Detailers',addr:'4C Freeman Way',contact:'Ronnie / Tom',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-m2-6',a:'Manukau Auto Valet',addr:'Ryan Place',contact:'Dharmesh',phone:'',email:'',n:'Uses Pacer — trial when picks up',pre:'Q',cycle:4},
+      {id:'r-m2-7',a:'NZ Mechanical',addr:'13I Ryan Place',contact:'Jeremy',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-m2-8',a:'Prime Auto Valet',addr:'13 Ryan Place',contact:'Guri',phone:'',email:'',n:'',pre:'S',cycle:4},
+    ]},
+    'W2-Tue':{area:'Wiri',stops:[
+      {id:'r-t2-1',a:'Elite Truck Specialists',addr:'256a Ross Common Rd',contact:'Clifford',phone:'0212780440',email:'',n:'Clifford handles orders',pre:'S',cycle:4},
+      {id:'r-t2-2',a:'Oceanic Cars',addr:'290 Ross Common Rd',contact:'Oosha',phone:'',email:'',n:'Second yard Papakura',pre:'Q',cycle:4},
+      {id:'r-t2-3',a:'LBT Transport',addr:'6 Tacoma Rd',contact:'Leif',phone:'',email:'',n:'Best Mon/Tue — take samples',pre:'',cycle:4},
+      {id:'r-t2-4',a:'Keith Andrews Fuso',addr:'131 Ross Common Rd',contact:'Frank / David',phone:'',email:'',n:'Grooming yard across road',pre:'',cycle:4},
+    ]},
+    'W2-Wed':{area:'Takanini',stops:[
+      {id:'r-w2-1',a:'Kobelco NZ',addr:'8 Great South Road',contact:'Nigel',phone:'',email:'',n:'Workshop foreman',pre:'S',cycle:4},
+      {id:'r-w2-2',a:'South Auckland Motors Ford',addr:'216 Great South Rd',contact:'Craig',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-w2-3',a:'Transcold Group',addr:'5 Marphona Crescent',contact:'Noel',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'r-w2-4',a:'YALE SG Equipment',addr:'10 Morphona St',contact:'Cameron',phone:'',email:'',n:'Jet degreaser / Plus 10 barrel',pre:'S',cycle:4},
+      {id:'r-w2-5',a:'MANHEIM',addr:'19 Spartan Rd',contact:'Kav',phone:'',email:'',n:'Monthly call',pre:'S',cycle:4},
+    ]},
+    'W2-Thu':{area:'Free day',stops:[]},'W2-Fri':{area:'Free day',stops:[]},
+    'W3-Mon':{area:'Mangere',stops:[]},'W3-Tue':{area:'Mangere Prime',stops:[]},'W3-Wed':{area:'Otahuhu',stops:[]},'W3-Thu':{area:'Papatoetoe',stops:[]},'W3-Fri':{area:'Free day',stops:[]},
+    'W4-Mon':{area:'Manukau',stops:[]},'W4-Tue':{area:'Wiri',stops:[]},'W4-Wed':{area:'Takanini',stops:[]},'W4-Thu':{area:'Free day',stops:[]},'W4-Fri':{area:'Free day',stops:[]},
+  },
+  Rep2:{
+    'W1-Mon':{area:'Penrose',stops:[
+      {id:'2-m1-1',a:'TR Group Ltd',addr:'781 Great South Road',contact:'Alex',phone:'',email:'',n:'Armourglow / Fleetwash trial',pre:'S',cycle:4},
+      {id:'2-m1-2',a:'LW Bonney Trucking',addr:'882 Great South Rd',contact:'John',phone:'',email:'',n:'John workshop mgr, Mike owner',pre:'S',cycle:4},
+      {id:'2-m1-3',a:'Elite Grooming Crew',addr:'940C Great South Rd',contact:'Inder',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'2-m1-4',a:'Jayco Auckland',addr:'960 Great South Road',contact:'Mitch',phone:'',email:'',n:'Liam / Gav / Dave in washbay',pre:'S',cycle:4},
+      {id:'2-m1-5',a:'SB European',addr:'3 Greenpark Rd',contact:'Saravan',phone:'',email:'',n:'',pre:'S',cycle:4},
+    ]},
+    'W1-Tue':{area:'Mt Wellington',stops:[
+      {id:'2-t1-1',a:'Auckland City Toyota',addr:'8 Forge Way',contact:'Daniel',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'2-t1-2',a:'The Gloss Detailing',addr:'80 Morrin Rd',contact:'Jack',phone:'027 520 5566',email:'',n:'Stay on top of account',pre:'',cycle:4},
+      {id:'2-t1-3',a:'Marine Detailing',addr:'Tamaki Marine Park',contact:'Harry',phone:'',email:'',n:'Call ahead',pre:'S',cycle:4},
+      {id:'2-t1-4',a:'Just Trucks',addr:'809 Great South Road',contact:'Karen',phone:'',email:'',n:'',pre:'S',cycle:4},
+    ]},
+    'W1-Wed':{area:'Newmarket / Grey Lynn',stops:[
+      {id:'2-w1-1',a:'B&B Auto Detailing',addr:'Upstairs at Nissan',contact:'Bhadreek',phone:'0220729376',email:'',n:'',pre:'S',cycle:4},
+      {id:'2-w1-2',a:'Continental Porsche',addr:'Newmarket',contact:'Liam / Josh',phone:'',email:'',n:'Service and sales grooming',pre:'S',cycle:4},
+      {id:'2-w1-3',a:'Auckland City Toyota',addr:'101 Great North Rd',contact:'Johnny',phone:'',email:'',n:'Johnny detailing mgr',pre:'',cycle:4},
+    ]},
+    'W1-Thu':{area:'Wairau Valley',stops:[
+      {id:'2-th1-1',a:'Caprice Valet',addr:'Wairau Valley',contact:'Raj',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'2-th1-2',a:'Archibald & Shorter',addr:'Wairau Valley',contact:'Aaron',phone:'',email:'',n:'Stone is groomer',pre:'',cycle:4},
+      {id:'2-th1-3',a:'Simon Lucas Mitsubishi',addr:'Wairau Valley',contact:'Allan / Steve',phone:'',email:'',n:'Allan grooming',pre:'S',cycle:4},
+    ]},
+    'W1-Fri':{area:'Albany',stops:[
+      {id:'2-f1-1',a:'Albany Toyota',addr:'Albany',contact:'Grant',phone:'',email:'',n:'',pre:'',cycle:4},
+      {id:'2-f1-2',a:'Takapuna Motor Group',addr:'Takapuna',contact:'James / Lez',phone:'',email:'',n:'Lez is groomer',pre:'',cycle:4},
+    ]},
+    'W2-Mon':{area:'Avondale / Mt Roskill',stops:[
+      {id:'2-m2-1',a:'Legendary Motors',addr:'32 Cartwright Road',contact:'Jade & Carl',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'2-m2-2',a:'Glen Eden Auto',addr:'Glen Eden',contact:'Rhonda & Bruce',phone:'',email:'',n:'4 weekly',pre:'S',cycle:4},
+    ]},
+    'W2-Tue':{area:'Henderson',stops:[
+      {id:'2-t2-1',a:'North West Toyota',addr:'282 Lincoln Road',contact:'Merissa / Jack',phone:'',email:'',n:'',pre:'',cycle:4},
+      {id:'2-t2-2',a:'West City Auto Group',addr:'Henderson',contact:'Rick & Sam',phone:'',email:'',n:'Mike service manager',pre:'S',cycle:4},
+      {id:'2-t2-3',a:'Winger Motors',addr:'Henderson',contact:'Sam / Anthony',phone:'',email:'',n:'Anthony groomer',pre:'',cycle:4},
+    ]},
+    'W2-Wed':{area:'New Lynn',stops:[
+      {id:'2-w2-1',a:'NZ Motors',addr:'5 Stock Street',contact:'Aggi / Abjit',phone:'',email:'',n:'Aggi groomer downstairs',pre:'S',cycle:4},
+      {id:'2-w2-2',a:'Magic Touch Grooming',addr:'3025 Great North Rd',contact:'Bill',phone:'',email:'',n:'',pre:'S',cycle:4},
+    ]},
+    'W2-Thu':{area:'Onehunga',stops:[
+      {id:'2-th2-1',a:'Gast Automotive',addr:'Onehunga',contact:'Gareth',phone:'',email:'',n:'',pre:'S',cycle:4},
+      {id:'2-th2-2',a:'Pearce Brothers',addr:'Onehunga',contact:'Carol / Zac',phone:'',email:'',n:'Zac groomer',pre:'S',cycle:4},
+      {id:'2-th2-3',a:'Auckland Radiator',addr:'Onehunga',contact:'Lee',phone:'',email:'',n:'',pre:'S',cycle:4},
+    ]},
+    'W2-Fri':{area:'West Cold Call',stops:[]},
+    'W3-Mon':{area:'Penrose',stops:[]},'W3-Tue':{area:'Mt Wellington',stops:[]},'W3-Wed':{area:'Newmarket / Grey Lynn',stops:[]},'W3-Thu':{area:'North Shore',stops:[]},'W3-Fri':{area:'Albany',stops:[]},
+    'W4-Mon':{area:'Avondale / Mt Roskill',stops:[]},'W4-Tue':{area:'Henderson',stops:[]},'W4-Wed':{area:'New Lynn',stops:[]},'W4-Thu':{area:'Onehunga',stops:[]},'W4-Fri':{area:'West Cold Call',stops:[]},
+  },
+  Hamilton:{
+    'W1-Mon':{area:'Te Rapa Left',stops:[
+      {id:'h-m1-1',a:'JJ Richards Hamilton',addr:'Te Rapa',contact:'Ryan Webb',phone:'',email:'',n:'Follow up Satin Black demo',pre:'S',cycle:4},
+      {id:'h-m1-2',a:'Terra CAT',addr:'Te Rapa',contact:'Nick / Nathan',phone:'',email:'',n:'Tested and like products',pre:'',cycle:4},
+      {id:'h-m1-3',a:'Waikato Ssang Yong LDV',addr:'Te Rapa',contact:'Angelique',phone:'',email:'',n:'Account open — has purchased',pre:'S',cycle:4},
+      {id:'h-m1-4',a:'Ingham Bottom Workshop',addr:'Te Rapa',contact:'Tony',phone:'',email:'',n:'Brake cleaner, Trucksteam',pre:'',cycle:4},
+      {id:'h-m1-5',a:'Ingham Prestige',addr:'Te Rapa',contact:'Dan Long',phone:'',email:'',n:'Same deal as Dwayne and more',pre:'',cycle:4},
+    ]},
+    'W1-Tue':{area:'Te Rapa Right',stops:[
+      {id:'h-t1-1',a:'Jaels Car Grooming',addr:'Te Rapa',contact:'Jael',phone:'',email:'',n:'Pays each visit',pre:'S',cycle:4},
+      {id:'h-t1-2',a:'Neat Glaze',addr:'Te Rapa',contact:'Hans Bahger',phone:'',email:'',n:'Buys monthly — all our stuff',pre:'S',cycle:4},
+      {id:'h-t1-3',a:'Keith Andrews',addr:'Te Rapa',contact:'Reegan / Sean',phone:'',email:'',n:'Sean service mgr',pre:'',cycle:4},
+    ]},
+    'W1-Wed':{area:'Over the Tracks',stops:[
+      {id:'h-w1-1',a:'Waikato Truckwash',addr:'Hamilton',contact:'Alan',phone:'',email:'',n:'Buys our grooming products',pre:'S',cycle:4},
+      {id:'h-w1-2',a:'Waikato Kia',addr:'Hamilton',contact:'Gary / Marius',phone:'',email:'',n:'Marius orders Armourglow',pre:'',cycle:4},
+      {id:'h-w1-3',a:'Fleet Image',addr:'Hamilton',contact:'Chanelle',phone:'',email:'',n:'Make appt to show full range',pre:'',cycle:4},
+    ]},
+    'W1-Thu':{area:'Tauranga',stops:[]},'W1-Fri':{area:'Cold Call Build',stops:[]},
+    'W2-Mon':{area:'Frankton',stops:[
+      {id:'h-m2-1',a:'Diesel and Turbo',addr:'Frankton',contact:'Suraj / Ivan',phone:'',email:'',n:'Uses us for grooming',pre:'S',cycle:4},
+      {id:'h-m2-2',a:'Auto Valet Ming Centre',addr:'Frankton',contact:'Eddie',phone:'',email:'',n:'Buys most of our stuff',pre:'S',cycle:4},
+    ]},
+    'W2-Tue':{area:'Cambridge',stops:[
+      {id:'h-t2-1',a:'Scania',addr:'Cambridge',contact:'Tabitha / Andrew',phone:'',email:'',n:'Slowly getting all products in',pre:'S',cycle:4},
+      {id:'h-t2-2',a:'Fieldline',addr:'Cambridge',contact:'Glenn',phone:'',email:'',n:'Buying more and more',pre:'S',cycle:4},
+    ]},
+    'W2-Wed':{area:'Morrinsville / Matamata',stops:[]},'W2-Thu':{area:'Cold Call Build',stops:[]},'W2-Fri':{area:'Cold Call Build',stops:[]},
+    'W3-Mon':{area:'Te Rapa Left',stops:[]},'W3-Tue':{area:'Te Rapa Right',stops:[]},'W3-Wed':{area:'Over the Tracks',stops:[]},'W3-Thu':{area:'Tauriko',stops:[]},'W3-Fri':{area:'Cold Call Build',stops:[]},
+    'W4-Mon':{area:'Frankton',stops:[]},'W4-Tue':{area:'Cambridge',stops:[]},'W4-Wed':{area:'Rotorua',stops:[]},'W4-Thu':{area:'Cold Call Build',stops:[]},'W4-Fri':{area:'Cold Call Build',stops:[]},
+  }
+};
+
+const STATE={};
+const MESSAGES=[
+  {from:'Ron',time:'8:42am',body:'Anyone been to Final Touch Albany lately? Thinking of pushing Armourglow.',isLead:false},
+  {from:'Rep 2',time:'9:15am',body:'Gloss Detailing Mt Wellington — Jack needs a full washbay quote. Good lead for whoever is closest.',isLead:true},
+];
+
+function isFree(rep,rk){const r=ROUTES[rep]&&ROUTES[rep][rk];if(!r)return true;return FREE_PATTERNS.some(p=>r.area.includes(p));}
+function getStops(){const r=ROUTES[curRep]&&ROUTES[curRep][curRouteKey];return r?r.stops:[];}
+function getArea(){const r=ROUTES[curRep]&&ROUTES[curRep][curRouteKey];return r?r.area:'';}
+function isOwnRep(){const v=document.getElementById('repSel').value;return!v||v===curRep;}
+
+function initState(){getStops().forEach(s=>{if(!STATE[s.id])STATE[s.id]={o:null,note:'',val:'',time:null,nextNote:'',referral:'',flagged:false,cycle:s.cycle||4,contact:s.contact||'',phone:s.phone||'',email:s.email||''};});}
+
+function switchView(name){
+  ['run','lb','msg'].forEach(v=>{
+    document.getElementById('panel-'+v).className='view-panel'+(v===name?' active':'');
+    document.getElementById('vtab-'+v).className='vtab'+(v===name?' active':'');
+  });
+  if(name==='lb')renderLeaderboard();
+  if(name==='msg')renderMessages();
+}
+
+function shiftCycle(delta){viewCycle=Math.max(1,viewCycle+delta);buildRouteGrid();}
+
+function buildRouteGrid(){
+  const g=document.getElementById('routeGrid');g.innerHTML='';
+  const rep=document.getElementById('repSel').value||curRep;
+  document.getElementById('cycleBadge').innerHTML='Cycle <strong>'+viewCycle+'</strong>';
+  const cs=getDateForCell(viewCycle,0,0);const ce=getDateForCell(viewCycle,3,4);
+  document.getElementById('cycleNavLabel').textContent='Cycle '+viewCycle+'  ·  '+fmtShort(cs)+' – '+fmtShort(ce);
+  const c=document.createElement('div');c.className='rg-corner';g.appendChild(c);
+  DAYS.forEach(d=>{const h=document.createElement('div');h.className='rg-dh';h.textContent=d;g.appendChild(h);});
+  WEEKS.forEach((w,wi)=>{
+    const wl=document.createElement('div');wl.className='rg-wl';wl.textContent=w;g.appendChild(wl);
+    DAYS.forEach((d,di)=>{
+      const rk=w+'-'+d;
+      const rd=ROUTES[rep]&&ROUTES[rep][rk];
+      const area=rd?rd.area:'';
+      const free=isFree(rep,rk);
+      const cellDate=getDateForCell(viewCycle,wi,di);
+      const isToday=cellDate.getTime()===TODAY.getTime();
+      const isActive=rk===curRouteKey;
+      const btn=document.createElement('button');
+      btn.className='rg-btn'+(free?' free':'')+(isActive?' active':'')+(isToday&&!isActive?' today':'');
+      btn.innerHTML='<span>'+d+'</span><span class="rg-date">'+fmtShort(cellDate)+'</span><span class="rg-area">'+(free?(area||'Free'):area)+'</span>';
+      btn.onclick=()=>{curRouteKey=rk;expandId=null;initState();buildRouteGrid();renderAll();};
+      g.appendChild(btn);
+    });
+  });
+}
+
+function repChanged(){const r=document.getElementById('repSel').value;if(r){curRep=r;curRouteKey='W1-Mon';expandId=null;initState();}buildRouteGrid();renderAll();}
+function renderAll(){renderPrepBanner();renderROBanner();renderStops();updateKPIs();}
+
+function renderPrepBanner(){
+  const items=[];getStops().forEach(s=>{const d=STATE[s.id];if(d&&d.nextNote&&d.nextNote.trim())items.push('<strong>'+s.a+':</strong> '+d.nextNote);});
+  document.getElementById('prepBanner').innerHTML=items.length?'<div class="prep-banner"><div class="prep-title">Prep reminders for today</div>'+items.map(i=>'• '+i).join('<br>')+'</div>':'';
+}
+
+function renderROBanner(){
+  const mine=isOwnRep();
+  const addBtn=document.getElementById('addStopBtn');const eod=document.getElementById('eodSection');
+  const names={Ron:'Ron',Rep2:'Rep 2',Hamilton:'Hamilton Rep'};
+  document.getElementById('roBanner').innerHTML=mine?'':'<div class="ro-banner"><span>Viewing '+( names[curRep]||curRep )+'\'s route — read only.</span><button class="suggest-btn" onclick="switchView(\'msg\')">Suggest lead</button></div>';
+  if(addBtn)addBtn.style.display=mine?'block':'none';
+  if(eod)eod.style.display=mine?'block':'none';
+}
+
+function renderStops(){
+  const list=document.getElementById('stopList');list.innerHTML='';
+  const mine=isOwnRep();const stops=getStops();
+  if(!stops.length){list.innerHTML='<div class="empty-day">'+(isFree(curRep,curRouteKey)?'Free day — add stops below':'No stops loaded for this route yet')+'</div>';return;}
+  stops.forEach((s,idx)=>{
+    const d=STATE[s.id]||{};
+    const vis=d.o&&d.o!=='skip';const ski=d.o==='skip';const op=expandId===s.id;
+    let pb='';if(s.pre&&s.pre.includes('S'))pb+='<span class="badge bc">Customer</span>';if(s.pre&&s.pre.includes('Q'))pb+='<span class="badge bq">Quoted</span>';
+    const cyc=d.cycle||s.cycle||4;if(cyc>4)pb+='<span class="badge bcyc">'+cyc+'w</span>';
+    let ob='';
+    if(d.o==='sold')ob='<span class="badge bsold">Sold</span>';
+    else if(d.o==='quoted')ob='<span class="badge bq">Quoted</span>';
+    else if(d.o==='demo')ob='<span class="badge" style="background:var(--amber-lt);color:#854F0B">Demo</span>';
+    else if(d.o==='trial')ob='<span class="badge" style="background:var(--purple-lt);color:var(--purple)">Trial</span>';
+    else if(d.o==='noans')ob='<span class="badge bna">No ans</span>';
+    else if(d.o==='skip')ob='<span class="badge bskip">Skipped</span>';
+    if(d.flagged)ob+='<span class="badge bfl">Flagged</span>';
+    const ts=d.time?'<div class="stime">arrived '+d.time+'</div>':'';
+    const ph=d.phone||s.phone||'';const em=d.email||s.email||'';const co=d.contact||s.contact||'';
+    const card=document.createElement('div');
+    card.className='sc'+(vis?' done':ski?' skipped':'')+(d.flagged?' flagged':'');
+    if(mine){
+      card.draggable=true;
+      card.addEventListener('dragstart',e=>{dragSrc=idx;card.style.opacity='.4';e.dataTransfer.effectAllowed='move';});
+      card.addEventListener('dragend',()=>{card.style.opacity='1';});
+      card.addEventListener('dragover',e=>e.preventDefault());
+      card.addEventListener('drop',e=>{e.preventDefault();if(dragSrc===null||dragSrc===idx)return;const arr=ROUTES[curRep][curRouteKey].stops;const mv=arr.splice(dragSrc,1)[0];arr.splice(idx,0,mv);dragSrc=null;renderStops();updateKPIs();});
+    }
+    const editContent=`
+      <div class="cg">
+        <div class="cf"><div class="flbl">Contact</div><input type="text" value="${co}" placeholder="Decision maker" onchange="uf('${s.id}','contact',this.value)"></div>
+        <div class="cf"><div class="flbl">Phone</div><input type="tel" value="${ph}" placeholder="+64 21..." onchange="uf('${s.id}','phone',this.value)"></div>
+        <div class="cf"><div class="flbl">Email</div><input type="email" value="${em}" placeholder="email@co.nz" onchange="uf('${s.id}','email',this.value)"></div>
+        <div class="cf"><div class="flbl">Cin7 ID</div><input type="text" placeholder="CIN-XXX" style="opacity:.6"></div>
+      </div>
+      ${(ph||em)?'<div class="cl">'+(ph?'<a class="clink ph" href="tel:'+ph+'">Call '+(co||ph)+'</a>':'')+(em?'<a class="clink em" href="mailto:'+em+'">Email</a>':'')+'</div>':''}
+      <div class="cy-row"><span>Visit cycle:</span>
+        <select class="cy-sel" onchange="uf('${s.id}','cycle',parseInt(this.value))">
+          <option value="1"${cyc===1?' selected':''}>Weekly</option>
+          <option value="2"${cyc===2?' selected':''}>Fortnightly</option>
+          <option value="4"${cyc===4?' selected':''}>4 weekly</option>
+          <option value="6"${cyc===6?' selected':''}>6 weekly</option>
+          <option value="8"${cyc===8?' selected':''}>8 weekly</option>
+          <option value="12"${cyc===12?' selected':''}>12 weekly</option>
+        </select>
+      </div>
+      ${s.n?'<div class="bg-note">'+s.n+'</div>':''}
+      <div class="orow">
+        <button class="ob${d.o==='sold'?' as':''}" onclick="so('${s.id}','sold')">Sold</button>
+        <button class="ob${d.o==='quoted'?' aq':''}" onclick="so('${s.id}','quoted')">Quoted</button>
+        <button class="ob${d.o==='demo'?' ad':''}" onclick="so('${s.id}','demo')">Demo</button>
+        <button class="ob${d.o==='trial'?' at':''}" onclick="so('${s.id}','trial')">Trial</button>
+        <button class="ob${d.o==='noans'?' an':''}" onclick="so('${s.id}','noans')">No answer</button>
+        <button class="ob${d.o==='skip'?' aski':''}" onclick="so('${s.id}','skip')">Skip</button>
+      </div>
+      <div class="ng">
+        <div><div class="flbl" style="margin-bottom:4px">Today's notes</div><textarea placeholder="Who you spoke to, what happened..." onchange="uf('${s.id}','note',this.value)">${d.note||''}</textarea></div>
+        <div><div class="flbl" style="margin-bottom:4px">Next visit reminder</div><textarea placeholder="Load 200L barrel, bring sample X..." onchange="uf('${s.id}','nextNote',this.value)">${d.nextNote||''}</textarea></div>
+      </div>
+      <div class="ref-box"><div class="ref-title"><div class="ref-dot"></div>Ask for referral</div><textarea placeholder="Referral name, business, contact..." onchange="uf('${s.id}','referral',this.value)">${d.referral||''}</textarea></div>
+      <div class="ar">
+        <div><div class="flbl" style="margin-bottom:4px">Order $</div><input class="oi" type="number" min="0" placeholder="0" value="${d.val||''}" onchange="uf('${s.id}','val',this.value);updateKPIs()"></div>
+        <button class="abtn${d.time?' done':''}" onclick="arr('${s.id}')">${d.time?'✓ Arrived':'Tap on arrive'}</button>
+        <button class="fbtn${d.flagged?' active':''}" onclick="flg('${s.id}')">${d.flagged?'Flagged':'Flag manager'}</button>
+      </div>`;
+    const readContent='<div style="padding:.2rem 0;font-size:13px;color:var(--text2)">'+(s.n||'No notes')+'</div>'+(ph||em?'<div class="cl" style="margin-top:.5rem">'+(ph?'<a class="clink ph" href="tel:'+ph+'">Call '+(co||ph)+'</a>':'')+(em?'<a class="clink em" href="mailto:'+em+'">Email</a>':'')+'</div>':'')+'<div style="margin-top:.5rem;font-size:12px;color:var(--text3)">Read only</div>';
+    card.innerHTML='<div class="sh" onclick="tog(\''+s.id+'\')"><span class="dh">⋮⋮</span><div class="snum'+(vis?' done':d.flagged?' fl':'')+'">'+(vis?'✓':d.flagged?'!':idx+1)+'</div><div class="si"><div class="sname">'+s.a+'</div><div class="saddr">'+(s.addr||'')+'</div>'+ts+'</div><div class="sbdg">'+pb+ob+'</div><div class="chev'+(op?' open':'')+'">▶</div></div><div class="sdet'+(op?' open':'')+'">'+( mine?editContent:readContent )+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function tog(id){expandId=expandId===id?null:id;renderStops();}
+function so(id,o){if(!STATE[id])STATE[id]={};STATE[id].o=o;if(!STATE[id].time)STATE[id].time=new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});renderStops();updateKPIs();toast(o==='sold'?'Sale logged':o==='demo'?'Demo logged':'Logged');}
+function arr(id){if(!STATE[id])STATE[id]={};STATE[id].time=new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});renderStops();toast('Arrival stamped');}
+function uf(id,f,v){if(!STATE[id])STATE[id]={};STATE[id][f]=v;if(f==='nextNote')renderPrepBanner();}
+function flg(id){if(!STATE[id])STATE[id]={};STATE[id].flagged=!STATE[id].flagged;renderStops();if(STATE[id].flagged)toast('Manager flagged — add detail in EOD');}
+
+function updateKPIs(){
+  const stops=getStops();let s=0,inv=0,d=0,q=0,tot=0,ct=0;
+  stops.forEach(st=>{const dd=STATE[st.id];if(!dd||!dd.o||dd.o==='skip')return;s++;if(dd.o==='sold'){inv++;if(dd.val){tot+=parseFloat(dd.val);ct++;}}if(dd.o==='demo')d++;if(dd.o==='quoted')q++;});
+  const t=20;const pct=Math.min(100,Math.round(s/t*100));
+  document.getElementById('kS').textContent=s+'/'+stops.length;
+  document.getElementById('kI').textContent=inv;document.getElementById('kD').textContent=d;document.getElementById('kQ').textContent=q;
+  document.getElementById('kA').textContent=ct>0?'$'+Math.round(tot/ct):'—';document.getElementById('kT').textContent=t;
+  const bar=document.getElementById('progBar');bar.style.width=pct+'%';
+  bar.style.background=pct>=100?'#1D9E75':pct>=60?'#BA7517':'#E24B4A';
+  document.getElementById('progLbl').textContent=s+' of '+t+' stops'+(pct>=100?' — target hit!':'');
+}
+
+function renderLeaderboard(){
+  const me=document.getElementById('repSel').value||curRep;
+  const data=[
+    {key:'Ron',name:'Ron',area:'South Auckland',stops:14,inv:4,demos:2,aov:285},
+    {key:'Rep2',name:'Rep 2',area:'Auckland City',stops:18,inv:6,demos:3,aov:310},
+    {key:'Hamilton',name:'Hamilton Rep',area:'Hamilton / Waikato',stops:11,inv:3,demos:1,aov:195},
+  ];
+  const score=r=>r.stops+r.inv*3+r.demos*2;
+  const sorted=[...data].sort((a,b)=>score(b)-score(a));
+  const mx={stops:Math.max(...sorted.map(r=>r.stops)),inv:Math.max(...sorted.map(r=>r.inv)),demos:Math.max(...sorted.map(r=>r.demos))};
+  const rks=['rk1','rk2','rk3'];
+  document.getElementById('lbCards').innerHTML=sorted.map((r,i)=>`
+    <div class="lb-card${r.key===me?' me':''}">
+      <div class="lb-rank-badge ${rks[i]}">#${i+1}</div>
+      <div class="lb-rep-name">${r.name}</div>
+      <div class="lb-rep-area">${r.area}</div>
+      <div class="lb-bars">
+        <div class="lb-bar-row"><span class="lb-bar-lbl">Stops</span><div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round(r.stops/mx.stops*100)}%;background:#1D9E75"></div></div><span class="lb-bar-val">${r.stops}</span></div>
+        <div class="lb-bar-row"><span class="lb-bar-lbl">Sales</span><div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round(r.inv/mx.inv*100)}%;background:#185FA5"></div></div><span class="lb-bar-val">${r.inv}</span></div>
+        <div class="lb-bar-row"><span class="lb-bar-lbl">Demos</span><div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round(r.demos/mx.demos*100)}%;background:#BA7517"></div></div><span class="lb-bar-val">${r.demos}</span></div>
+      </div>
+      <div class="lb-total">AOV: <strong>$${r.aov}</strong> · Score: <strong>${score(r)}</strong></div>
+    </div>`).join('');
+}
+
+function renderMessages(){
+  document.getElementById('msgList').innerHTML=MESSAGES.map(m=>`
+    <div class="msg-card${m.isLead?' lead':''}">
+      <div class="msg-hdr"><span class="msg-from">${m.from}</span><span class="msg-time">${m.time}</span>${m.isLead?'<span class="msg-tag">Lead tip</span>':''}</div>
+      <div class="msg-body">${m.body}</div>
+    </div>`).join('');
+}
+
+function sendMsg(isLead){
+  const rep=document.getElementById('repSel').value;if(!rep){toast('Select your name first');return;}
+  const txt=document.getElementById('msgInput').value.trim();if(!txt){toast('Enter a message first');return;}
+  const names={Ron:'Ron',Rep2:'Rep 2',Hamilton:'Hamilton Rep'};
+  MESSAGES.push({from:names[rep]||rep,time:new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'}),body:txt,isLead});
+  document.getElementById('msgInput').value='';renderMessages();toast(isLead?'Lead tip sent':'Message sent');
+}
+
+function showModal(){document.getElementById('modalWrap').style.display='block';setTimeout(()=>document.getElementById('mName').focus(),100);}
+function hideModal(){document.getElementById('modalWrap').style.display='none';}
+function addStop(){
+  const name=document.getElementById('mName').value.trim();if(!name){toast('Enter a business name');return;}
+  const id='c-'+Date.now();
+  const stop={id,a:name,addr:document.getElementById('mAddr').value.trim(),contact:document.getElementById('mContact').value.trim(),phone:document.getElementById('mPhone').value.trim(),email:document.getElementById('mEmail').value.trim(),cycle:parseInt(document.getElementById('mCycle').value),n:document.getElementById('mNote').value.trim(),pre:''};
+  if(!ROUTES[curRep][curRouteKey])ROUTES[curRep][curRouteKey]={area:'Custom',stops:[]};
+  ROUTES[curRep][curRouteKey].stops.push(stop);
+  STATE[id]={o:null,note:'',val:'',time:null,nextNote:'',referral:'',flagged:false,cycle:stop.cycle,contact:stop.contact,phone:stop.phone,email:stop.email};
+  hideModal();['mName','mAddr','mContact','mPhone','mEmail','mNote'].forEach(x=>document.getElementById(x).value='');
+  renderStops();updateKPIs();toast('Stop added');
+}
+
+function submitDay(){
+  const rep=document.getElementById('repSel').value;if(!rep){toast('Select your name first');return;}
+  const stops=getStops();let s=0,inv=0,dm=0,q=0,tot=0,ct=0;const dets=[],flags=[],refs=[];
+  stops.forEach(st=>{const d=STATE[st.id];if(!d||!d.o)return;if(d.o!=='skip')s++;if(d.o==='sold'){inv++;if(d.val){tot+=parseFloat(d.val);ct++;}}if(d.o==='demo')dm++;if(d.o==='quoted')q++;if(d.o&&d.o!=='skip')dets.push(st.a+' — '+d.o+(d.note?' | '+d.note:''));if(d.flagged)flags.push(st.a);if(d.referral&&d.referral.trim())refs.push(st.a+': '+d.referral);});
+  const aov=ct>0?'$'+Math.round(tot/ct):'n/a';
+  const names={Ron:'Ron',Rep2:'Rep 2',Hamilton:'Hamilton Rep'};
+  const lines=['**Autosmart — End of Day Report**','**'+fmtFull(TODAY)+' | Cycle '+viewCycle+' · '+getArea()+'**','','**Rep:** '+(names[rep]||rep),'','**KPIs**','Stops: '+s+'/'+stops.length+'  |  Invoices: '+inv+'  |  Demos: '+dm+'  |  Quotes: '+q+'  |  AOV: '+aov,''];
+  if(dets.length){lines.push('**Stops logged**');dets.forEach(d=>lines.push('• '+d));lines.push('');}
+  if(flags.length){lines.push('**Manager flags**');flags.forEach(f=>lines.push('• '+f));lines.push('');}
+  if(refs.length){lines.push('**Referrals captured**');refs.forEach(r=>lines.push('• '+r));lines.push('');}
+  const notes=document.getElementById('eodN').value;const cbs=document.getElementById('eodC').value;
+  if(notes)lines.push('**Notes**',notes,'');if(cbs)lines.push('**Call backs**',cbs,'');
+  lines.push('_Submitted via Autosmart Digital Run Sheet v4_');
+  navigator.clipboard.writeText(lines.join('\n')).catch(()=>{});
+  toast('Copied — paste into Teams');
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// Show install banner on iOS Safari
+const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.navigator.standalone;
+if(isIOS)document.getElementById('installBanner').classList.add('visible');
+
+// Auto-select today's route
+const todayDow=TODAY.getDay();
+const dowMap={1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri'};
+curRouteKey='W'+todayInfo.week+'-'+(dowMap[todayDow]||'Mon');
+initState();buildRouteGrid();renderAll();
+</script>
+</body>
+</html>
