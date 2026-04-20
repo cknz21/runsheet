@@ -363,15 +363,28 @@ const TEAMS_WEBHOOK='https://000dda6a3d8fefea87b8a9faed6550.c3.environment.api.p
 
 async function notifyTeams(p){
   const statusEmoji={hot:'🔥',warm:'⚡',cold:'❄️',done:'✅',no:'❌'}[p.status]||'📍';
+  const facts=[];
+  if(p.contact||p.phone)facts.push({title:'Contact',value:(p.contact||'')+(p.phone?' · '+p.phone:'')});
+  if(p.status)facts.push({title:'Status',value:statusEmoji+' '+p.status+(p.star?' · '+'★'.repeat(p.star):'')});
+  if(p.spend)facts.push({title:'Est. spend',value:SL[p.spend]+'/mo'});
+  if(p.comps&&p.comps.length)facts.push({title:'Competitors',value:p.comps.join(', ')});
+  if(p.addr)facts.push({title:'Location',value:p.addr});
   const body={
-    title:statusEmoji+' New prospect — '+p.name,
-    text:'**'+p.name+'**'+(p.addr?' · '+p.addr:'')+'\n\n'
-      +(p.contact?'**Contact:** '+p.contact+(p.phone?' · '+p.phone:'')+'\n':'')
-      +(p.status?'**Status:** '+p.status+(p.star?' · '+'★'.repeat(p.star):'')+'\n':'')
-      +(p.spend?'**Est. spend:** '+SL[p.spend]+'/mo\n':'')
-      +(p.comps&&p.comps.length?'**Competitors:** '+p.comps.join(', ')+'\n':'')
-      +(p.notes?'\n'+p.notes:'')
-      +'\n\n_Logged by Josh Peden — Auckland North · '+p.time+' '+p.date+'_'
+    type:'message',
+    attachments:[{
+      contentType:'application/vnd.microsoft.card.adaptive',
+      content:{
+        '$schema':'http://adaptivecards.io/schemas/adaptive-card.json',
+        type:'AdaptiveCard',
+        version:'1.4',
+        body:[
+          {type:'TextBlock',size:'Large',weight:'Bolder',text:statusEmoji+' '+p.name,wrap:true},
+          {type:'FactSet',facts:facts},
+          ...(p.notes?[{type:'TextBlock',text:p.notes,wrap:true,spacing:'Medium',isSubtle:true}]:[]),
+          {type:'TextBlock',text:'Josh Peden — Auckland North · '+p.time+' '+p.date,wrap:true,spacing:'Medium',isSubtle:true,size:'Small'}
+        ]
+      }
+    }]
   };
   try{
     await fetch(TEAMS_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
