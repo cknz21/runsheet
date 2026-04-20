@@ -280,23 +280,21 @@ input[type=file]{display:none}
   </div>
 
   <div class="rating-row">
-    <span class="rl">Rating</span>
+    <span class="rl">Likely?</span>
     <div class="stars" id="starRow">
-      <span class="bstar" onclick="setStar(1)">★</span>
-      <span class="bstar" onclick="setStar(2)">★</span>
-      <span class="bstar" onclick="setStar(3)">★</span>
-      <span class="bstar" onclick="setStar(4)">★</span>
-      <span class="bstar" onclick="setStar(5)">★</span>
+      <span class="bstar" onclick="setStar(1)" title="1 — Low chance">★</span>
+      <span class="bstar" onclick="setStar(2)" title="2">★</span>
+      <span class="bstar" onclick="setStar(3)" title="3 — Maybe">★</span>
+      <span class="bstar" onclick="setStar(4)" title="4">★</span>
+      <span class="bstar" onclick="setStar(5)" title="5 — High chance">★</span>
     </div>
+    <span style="font-size:11px;color:var(--t3);margin-left:4px"></span>
   </div>
 
   <div class="sec-title">Status</div>
   <div class="pill-row">
-    <button class="pill" id="sb-hot" onclick="setSt('hot')">🔥 Hot</button>
-    <button class="pill" id="sb-warm" onclick="setSt('warm')">Warm</button>
-    <button class="pill" id="sb-cold" onclick="setSt('cold')">Cold call</button>
     <button class="pill" id="sb-done" onclick="setSt('done')">✓ Visited</button>
-    <button class="pill" id="sb-no" onclick="setSt('no')">Not interested</button>
+    <button class="pill" id="sb-no" onclick="setSt('no')">Not available</button>
   </div>
 
   <div class="sec-title">Est. monthly spend</div>
@@ -310,11 +308,14 @@ input[type=file]{display:none}
   <div class="sec-title">Competitor products spotted</div>
   <div class="pill-row">
     <button class="pill" data-cv="Wurth" onclick="toggleC('Wurth')">Wurth</button>
-    <button class="pill" data-cv="Kemsol" onclick="toggleC('Kemsol')">Kemsol</button>
     <button class="pill" data-cv="Pacer" onclick="toggleC('Pacer')">Pacer</button>
     <button class="pill" data-cv="Forch" onclick="toggleC('Forch')">Forch</button>
+    <button class="pill" data-cv="Enviro Chem" onclick="toggleC('Enviro Chem')">Enviro Chem</button>
     <button class="pill" data-cv="3D" onclick="toggleC('3D')">3D</button>
     <button class="pill" data-cv="Other" onclick="toggleC('Other')">Other</button>
+  </div>
+  <div id="otherCompWrap" style="display:none;margin-top:6px;margin-bottom:.75rem">
+    <input type="text" id="otherCompNote" placeholder="What brand / product did you see?" style="font-size:14px;padding:9px 11px;border-radius:8px;border:.5px solid var(--brs);background:var(--bg);color:var(--t);width:100%">
   </div>
 
   <!-- VOICE NOTES SECTION -->
@@ -395,7 +396,7 @@ let prospects=JSON.parse(localStorage.getItem('nl_prospects')||'[]');
 let editId=null,curStar=0,curSt='',curSp='',curComps=[],curPhotos=[];
 let activeFilters={status:null,spend:null,star:null};
 let dragSrc=null;
-let mediaRecorder=null,audioChunks=[],isRecording=false;
+let isRecording=false;
 let pendingTranscript='';
 
 const WEEKS=['W1','W2','W3','W4'],DAYS=['Mon','Tue','Wed','Thu','Fri'];
@@ -430,115 +431,122 @@ function filtered(){
   });
 }
 
-// ── VOICE RECORDING & AI ────────────────────────────────────────────────────
-async function toggleRecording(){
-  if(isRecording){stopRecording();return;}
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    audioChunks=[];
-    mediaRecorder=new MediaRecorder(stream);
-    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};
-    mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());processAudio();};
-    mediaRecorder.start();
+// ── VOICE TO TEXT — Web Speech API (native Safari/iPhone) ──────────────────
+let recognition=null;
+let isRecording=false;
+
+function toggleRecording(){
+  if(isRecording){stopVoice();return;}
+  startVoice();
+}
+
+function startVoice(){
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    toast('Voice not supported on this browser — type your note');
+    document.getElementById('voiceStatus').textContent='Not supported';
+    return;
+  }
+  recognition=new SpeechRecognition();
+  recognition.lang='en-NZ';
+  recognition.continuous=true;
+  recognition.interimResults=true;
+  recognition.maxAlternatives=1;
+
+  let finalText='';
+
+  recognition.onstart=()=>{
     isRecording=true;
     document.getElementById('voiceBtn').className='voice-btn recording';
     document.getElementById('voiceBtn').textContent='⏹';
-    document.getElementById('voiceStatus').textContent='Recording... tap to stop';
-  }catch(e){
-    toast('Microphone access denied');
-    document.getElementById('voiceStatus').textContent='Mic access denied';
-  }
-}
-
-function stopRecording(){
-  if(mediaRecorder&&mediaRecorder.state!=='inactive'){mediaRecorder.stop();}
-  isRecording=false;
-  document.getElementById('voiceBtn').className='voice-btn processing';
-  document.getElementById('voiceBtn').textContent='◌';
-  document.getElementById('voiceStatus').textContent='Processing...';
-}
-
-async function processAudio(){
-  const blob=new Blob(audioChunks,{type:'audio/webm'});
-  const reader=new FileReader();
-  reader.onload=async e=>{
-    const base64Audio=e.target.result.split(',')[1];
-    document.getElementById('aiOverlay').classList.add('show');
-    try{
-      // Use Claude to transcribe and structure the note
-      const businessName=document.getElementById('fNm').value||'this business';
-      const prompt=`You are helping a field sales rep for Autosmart NZ log a prospect visit note.
-
-The rep just recorded a voice note while visiting ${businessName}. The audio has been transcribed as base64. However since I cannot actually transcribe audio in this demo, please create a realistic structured sales visit note based on this context.
-
-Actually - the audio data is: [voice recording about a prospect visit]
-
-Please write a clean, structured sales visit note based on what a field rep might say. Include:
-- Who they spoke to
-- What products the customer currently uses
-- The opportunity identified  
-- Recommended next action
-- Any relevant details
-
-Keep it concise (3-5 sentences). Write it as a factual note, not instructions.
-
-Business being visited: ${businessName}
-Current address entered: ${document.getElementById('fAd').value||'Northland'}`;
-
-      // Since we can't actually decode audio here, use a smart prompt that generates
-      // a structured note from whatever context we have
-      const contextPrompt=`You are a field sales note assistant for Autosmart NZ, a vehicle care products company.
-
-A sales rep named Josh Peden just finished visiting a prospect called "${businessName}" in Northland, New Zealand. He recorded a voice note while walking back to his van.
-
-Based on the context that this is a new prospect being cold-called in Northland (automotive, trucking, marine, or fleet businesses), write a realistic placeholder sales visit note that he can edit.
-
-Format as 2-3 short sentences covering: who was spoken to, current supplier situation, and recommended next step. Keep it practical and brief.
-
-Respond with ONLY the note text, nothing else.`;
-
-      const response=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:200,
-          messages:[{role:'user',content:contextPrompt}]
-        })
-      });
-      const data=await response.json();
-      const noteText=data.content&&data.content[0]?data.content[0].text:'Could not process audio. Please type your note manually.';
-      pendingTranscript=noteText;
-      document.getElementById('transcriptText').textContent=noteText;
-      document.getElementById('transcriptPreview').classList.add('show');
-    }catch(err){
-      toast('AI unavailable — note typed manually');
-    }
-    document.getElementById('aiOverlay').classList.remove('show');
-    document.getElementById('voiceBtn').className='voice-btn';
-    document.getElementById('voiceBtn').textContent='🎤';
-    document.getElementById('voiceStatus').textContent='Tap to record';
+    document.getElementById('voiceStatus').textContent='Listening... tap to stop';
   };
-  reader.readAsDataURL(blob);
+
+  recognition.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) finalText+=e.results[i][0].transcript+' ';
+      else interim+=e.results[i][0].transcript;
+    }
+    document.getElementById('voiceStatus').textContent=interim?'Heard: '+interim.slice(0,30)+'...':'Listening...';
+  };
+
+  recognition.onerror=e=>{
+    if(e.error==='not-allowed'){toast('Microphone access denied — check Safari settings');}
+    else if(e.error==='no-speech'){toast('No speech detected — try again');}
+    else{toast('Voice error: '+e.error);}
+    stopVoice();
+  };
+
+  recognition.onend=()=>{
+    isRecording=false;
+    document.getElementById('voiceBtn').className='voice-btn processing';
+    document.getElementById('voiceBtn').textContent='◌';
+    document.getElementById('voiceStatus').textContent='Processing with AI...';
+    if(finalText.trim()){
+      processWithAI(finalText.trim());
+    } else {
+      document.getElementById('voiceBtn').className='voice-btn';
+      document.getElementById('voiceBtn').textContent='🎤';
+      document.getElementById('voiceStatus').textContent='Tap to record';
+      toast('Nothing heard — try again');
+    }
+  };
+
+  try{recognition.start();}
+  catch(e){toast('Could not start microphone');stopVoice();}
 }
 
-async function processVoiceWithAI(businessName,audioBase64){
-  // Full implementation: sends audio as base64 to Claude with transcription prompt
-  const response=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:300,
-      system:'You are a field sales visit note assistant for Autosmart NZ. Convert spoken voice notes into clean, structured prospect notes. Extract: contact name, what they spoke about, competitor products mentioned, opportunity level, and recommended next action. Write in third person, past tense, 2-4 sentences. Return only the note, nothing else.',
-      messages:[{role:'user',content:[
-        {type:'text',text:`Transcribe and structure this voice note from a sales rep visiting "${businessName}" in Northland NZ:`},
-        {type:'text',text:'[Audio recorded — '+Math.round(audioChunks.reduce((a,c)=>a+c.size,0)/1024)+'KB]'}
-      ]}]
-    })
-  });
-  const data=await response.json();
-  return data.content&&data.content[0]?data.content[0].text:'';
+function stopVoice(){
+  if(recognition){try{recognition.stop();}catch(e){}}
+  isRecording=false;
+  document.getElementById('voiceBtn').className='voice-btn';
+  document.getElementById('voiceBtn').textContent='🎤';
+  document.getElementById('voiceStatus').textContent='Tap to record';
+}
+
+async function processWithAI(transcript){
+  const businessName=document.getElementById('fNm').value||'this business';
+  document.getElementById('aiOverlay').classList.add('show');
+  try{
+    const prompt=`You are a field sales note assistant for Autosmart NZ (vehicle care products — detailing chemicals, cleaners, workshop consumables).
+
+A sales rep named Josh Peden just visited a prospect called "${businessName}" and spoke this voice note:
+
+"${transcript}"
+
+Clean this up into a concise, structured visit note (2-4 sentences). Extract and include:
+- Who was spoken to (if mentioned)
+- Current supplier / products they use (if mentioned)  
+- The opportunity or interest level
+- Recommended next action
+
+Write in past tense. Return ONLY the cleaned note, nothing else.`;
+
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:200,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await response.json();
+    const noteText=data.content&&data.content[0]?data.content[0].text:transcript;
+    pendingTranscript=noteText;
+    document.getElementById('transcriptText').textContent=noteText;
+    document.getElementById('transcriptPreview').classList.add('show');
+  }catch(err){
+    // If AI fails, just use the raw transcript
+    pendingTranscript=transcript;
+    document.getElementById('transcriptText').textContent=transcript;
+    document.getElementById('transcriptPreview').classList.add('show');
+  }
+  document.getElementById('aiOverlay').classList.remove('show');
+  document.getElementById('voiceBtn').className='voice-btn';
+  document.getElementById('voiceBtn').textContent='🎤';
+  document.getElementById('voiceStatus').textContent='Tap to record';
 }
 
 function acceptTranscript(){
@@ -557,6 +565,8 @@ function discardTranscript(){
 function openMod(id){
   editId=id||null;curStar=0;curSt='';curSp='';curComps=[];curPhotos=[];
   ['fNm','fAd','fCo','fPh','fEm','fNo'].forEach(f=>document.getElementById(f).value='');
+  const ocn=document.getElementById('otherCompNote');if(ocn)ocn.value='';
+  const ow=document.getElementById('otherCompWrap');if(ow)ow.style.display='none';
   document.getElementById('transcriptPreview').classList.remove('show');
   document.getElementById('modTitle').textContent=id?'Edit prospect':'New prospect';
   if(id){
@@ -570,6 +580,7 @@ function openMod(id){
       document.getElementById('fNo').value=p.notes||'';
       curStar=p.star||0;curSt=p.status||'';curSp=p.spend||'';
       curComps=[...(p.comps||[])];curPhotos=[...(p.photos||[])];
+      const ocnEdit=document.getElementById('otherCompNote');if(ocnEdit&&p.otherComp)ocnEdit.value=p.otherComp;
     }
   }
   updStars();updSt();updSp();updComps();updPhotos();
@@ -586,13 +597,23 @@ function setStar(v){curStar=curStar===v?0:v;updStars();}
 function updStars(){document.querySelectorAll('.bstar').forEach((s,i)=>{s.className='bstar'+(i<curStar?' on':'');});}
 function setSt(v){curSt=curSt===v?'':v;updSt();}
 function updSt(){
-  const m={hot:'on-r',warm:'on-a',cold:'on-b',done:'on-g',no:'on-gr'};
-  ['hot','warm','cold','done','no'].forEach(s=>{const b=document.getElementById('sb-'+s);if(b)b.className='pill'+(curSt===s?' '+m[s]:'');});
+  const m={done:'on-g',no:'on-gr'};
+  ['done','no'].forEach(s=>{const b=document.getElementById('sb-'+s);if(b)b.className='pill'+(curSt===s?' '+m[s]:'');});
 }
 function setSp(v){curSp=curSp===v?'':v;updSp();}
 function updSp(){document.querySelectorAll('[data-sv]').forEach(b=>{b.className='pill'+(curSp===b.dataset.sv?' on-g':'');});}
-function toggleC(v){const i=curComps.indexOf(v);if(i>=0)curComps.splice(i,1);else curComps.push(v);updComps();}
-function updComps(){document.querySelectorAll('[data-cv]').forEach(b=>{b.className='pill'+(curComps.includes(b.dataset.cv)?' on-p':'');});}
+function toggleC(v){
+  const i=curComps.indexOf(v);
+  if(i>=0)curComps.splice(i,1);else curComps.push(v);
+  updComps();
+  const ow=document.getElementById('otherCompWrap');
+  if(ow)ow.style.display=curComps.includes('Other')?'block':'none';
+}
+function updComps(){
+  document.querySelectorAll('[data-cv]').forEach(b=>{b.className='pill'+(curComps.includes(b.dataset.cv)?' on-p':'');});
+  const ow=document.getElementById('otherCompWrap');
+  if(ow)ow.style.display=curComps.includes('Other')?'block':'none';
+}
 
 function addPh(input){
   const file=input.files[0];if(!file)return;
@@ -650,7 +671,7 @@ function savePros(){
     email:document.getElementById('fEm').value.trim(),
     notes:document.getElementById('fNo').value.trim(),
     star:curStar,status:curSt,spend:curSp,
-    comps:[...curComps],photos:[...curPhotos],
+    comps:[...curComps],otherComp:(curComps.includes('Other')?document.getElementById('otherCompNote').value.trim():''),photos:[...curPhotos],
     time:new Date().toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'}),
     date:new Date().toLocaleDateString('en-NZ',{day:'numeric',month:'short'}),
     week:'',day:'',
@@ -677,7 +698,7 @@ function renderProspects(){
     else if(p.status==='cold')badges+='<span class="bdg bc">Cold</span>';
     else if(p.status==='done')badges+='<span class="bdg bd">✓ Visited</span>';
     if(p.spend)badges+='<span class="bdg bsp">'+SL[p.spend]+'</span>';
-    if(p.comps&&p.comps.length)badges+='<span class="bdg bcomp">'+p.comps.slice(0,2).join(', ')+'</span>';
+    if(p.comps&&p.comps.length)badges+='<span class="bdg bcomp">'+(p.comps.includes('Other')&&p.otherComp?p.comps.filter(c=>c!=='Other').concat(p.otherComp).slice(0,2).join(', '):p.comps.slice(0,2).join(', '))+'</span>';
     if(p.photos&&p.photos.length)badges+='<span class="bdg bpic">📷'+p.photos.length+'</span>';
     const stars=p.star?'★'.repeat(p.star):'';
     const ph=p.phone||'';const co=p.contact||'';const em=p.email||'';
